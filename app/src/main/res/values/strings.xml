@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MealPlan</string>
+    <string name="home">Home</string>
+    <string name="favorites">Favorit</string>
+    <string name="planner">Planner</string>
+    <string name="meal_image">Gambar resep</string>
+    <string name="ingredients">Bahan-Bahan</string>
+    <string name="instructions">Cara Memasak</string>
+    <string name="no_internet">Tidak ada koneksi internet</string>
+    <string name="retry">Coba Lagi</string>
+    <string name="no_favorites">Belum ada resep favorit</string>
+    <string name="add_favorite">Tambah ke favorit</string>
+    <string name="remove_favorite">Hapus dari favorit</string>
+    <string name="toggle_theme">Ganti tema</string>
+    <string name="back">Kembali</string>
+    <string name="delete">Hapus</string>
+    <string name="add_meal">Tambah resep</string>
+    <string name="select_favorite">Pilih dari favorit</string>
+    <string name="random_recipe">Resep Acak</string>
+    <string name="share">Bagikan</string>
+    <string name="grocery_list">Daftar Belanja</string>
+    <string name="watch_youtube">Tonton Tutorial di YouTube</string>
+    <string name="youtube_not_found">Link YouTube tidak tersedia</string>
+</resources>

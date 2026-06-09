@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="card_radius">14dp</dimen>
+    <dimen name="card_elevation">3dp</dimen>
+    <dimen name="page_padding">16dp</dimen>
+    <dimen name="item_spacing">10dp</dimen>
+</resources>
