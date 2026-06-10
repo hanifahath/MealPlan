@@ -6,8 +6,8 @@
     android:orientation="horizontal"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
-    android:paddingTop="12dp"
-    android:paddingBottom="12dp"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp"
     android:gravity="center_vertical"
     android:foreground="?attr/selectableItemBackground">
 
@@ -29,7 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="14sp"
-            android:textColor="?attr/colorOnSurface"/>
+            android:textColor="?attr/colorOnBackground"/>
 
         <TextView
             android:id="@+id/tv_grocery_measure"
@@ -37,6 +37,6 @@
             android:layout_height="wrap_content"
             android:textSize="12sp"
             android:textColor="@color/primary_color"
-            android:visibility="gone"/>
+            android:layout_marginTop="1dp"/>
     </LinearLayout>
 </LinearLayout>

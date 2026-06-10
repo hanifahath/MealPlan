@@ -16,7 +16,6 @@
         app:defaultNavHost="true"
         app:navGraph="@navigation/nav_graph"/>
 
-    <!-- Divider tipis di atas bottom nav -->
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
@@ -28,4 +27,5 @@
         android:layout_height="wrap_content"
         app:menu="@menu/bottom_nav_menu"
         app:labelVisibilityMode="labeled"/>
+
 </LinearLayout>

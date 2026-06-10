@@ -43,6 +43,14 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.ViewHolder> {
         Meal meal = meals.get(position);
         holder.tvName.setText(meal.getName());
 
+        // Tampilkan tag kategori kalau ada
+        if (meal.getCategory() != null && !meal.getCategory().isEmpty()) {
+            holder.tvCategory.setVisibility(View.VISIBLE);
+            holder.tvCategory.setText(meal.getCategory());
+        } else {
+            holder.tvCategory.setVisibility(View.GONE);
+        }
+
         Glide.with(context)
                 .load(meal.getThumb())
                 .placeholder(R.drawable.ic_placeholder)
@@ -64,12 +72,13 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.ViewHolder> {
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView imgThumb;
-        TextView tvName;
+        TextView tvName, tvCategory;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            imgThumb = itemView.findViewById(R.id.img_meal_thumb);
-            tvName   = itemView.findViewById(R.id.tv_meal_name);
+            imgThumb   = itemView.findViewById(R.id.img_meal_thumb);
+            tvName     = itemView.findViewById(R.id.tv_meal_name);
+            tvCategory = itemView.findViewById(R.id.tv_meal_category);
         }
     }
 }
