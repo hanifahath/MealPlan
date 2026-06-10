@@ -4,6 +4,7 @@
     <string name="home">Home</string>
     <string name="favorites">Favorit</string>
     <string name="planner">Planner</string>
+    <string name="lists">Belanja</string>
     <string name="meal_image">Gambar resep</string>
     <string name="ingredients">Bahan-Bahan</string>
     <string name="instructions">Cara Memasak</string>
@@ -22,4 +23,12 @@
     <string name="grocery_list">Daftar Belanja</string>
     <string name="watch_youtube">Tonton Tutorial di YouTube</string>
     <string name="youtube_not_found">Link YouTube tidak tersedia</string>
+    <string name="search_hint">Cari resep...</string>
+    <string name="recent_search">Pencarian Terakhir</string>
+    <string name="sort_az">A–Z</string>
+    <string name="sort_newest">Terbaru</string>
+    <string name="sort_oldest">Terlama</string>
+    <string name="no_grocery">Belanja kosong</string>
+    <string name="all_recipes">Semua</string>
+    <string name="no_planner">Planner kosong</string>
 </resources>

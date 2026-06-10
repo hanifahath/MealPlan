@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:background="?android:attr/colorBackground">
+    android:background="?android:attr/colorBackground"
+    android:fitsSystemWindows="true">
 
     <!-- Header -->
     <LinearLayout
@@ -12,9 +14,9 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingStart="20dp"
-        android:paddingEnd="16dp"
-        android:paddingTop="20dp"
-        android:paddingBottom="12dp"
+        android:paddingEnd="12dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="8dp"
         android:gravity="center_vertical">
 
         <TextView
@@ -22,11 +24,10 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/favorites"
-            android:textSize="26sp"
+            android:textSize="24sp"
             android:textStyle="bold"
             android:textColor="?attr/colorOnBackground"/>
 
-        <!-- Counter badge -->
         <TextView
             android:id="@+id/tv_fav_count"
             android:layout_width="wrap_content"
@@ -38,7 +39,18 @@
             android:textSize="12sp"
             android:textStyle="bold"
             android:textColor="@color/primary_color"
-            android:background="@drawable/bg_chip_normal"/>
+            android:background="@drawable/bg_chip_normal"
+            android:layout_marginEnd="8dp"/>
+
+        <!-- Sort button -->
+        <ImageButton
+            android:id="@+id/btn_sort"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_sort"
+            android:background="@drawable/bg_chip_normal"
+            app:tint="@color/primary_color"
+            android:contentDescription="Sort"/>
     </LinearLayout>
 
     <FrameLayout
@@ -46,10 +58,13 @@
         android:layout_height="0dp"
         android:layout_weight="1">
 
+        <!-- Grid RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_favorites"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
             android:paddingTop="4dp"
             android:paddingBottom="16dp"
             android:clipToPadding="false"/>

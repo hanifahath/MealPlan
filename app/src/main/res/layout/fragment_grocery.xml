@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="?android:attr/colorBackground"
+    android:fitsSystemWindows="true">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="20dp"
+        android:paddingEnd="12dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="4dp"
+        android:gravity="center_vertical">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/lists"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="?attr/colorOnBackground"/>
+
+            <TextView
+                android:id="@+id/tv_grocery_subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:textColor="@color/primary_color"/>
+        </LinearLayout>
+
+        <!-- Share list -->
+        <ImageButton
+            android:id="@+id/btn_share_grocery"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_share"
+            android:background="@drawable/bg_chip_normal"
+            app:tint="@color/primary_color"
+            android:contentDescription="@string/share"/>
+    </LinearLayout>
+
+    <!-- Info bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="4dp"
+        android:padding="12dp"
+        android:background="@drawable/bg_rounded_surface"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:src="@drawable/ic_grocery"
+            app:tint="@color/primary_color"
+            android:contentDescription="@null"/>
+
+        <TextView
+            android:id="@+id/tv_grocery_info"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="10dp"
+            android:textSize="12sp"
+            android:textColor="?attr/colorOnSurface"/>
+
+        <Button
+            android:id="@+id/btn_clear_checked"
+            android:layout_width="wrap_content"
+            android:layout_height="28dp"
+            android:text="Hapus centang"
+            android:textSize="10sp"
+            android:backgroundTint="@color/divider_color"
+            android:textColor="@color/chip_text_normal"
+            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"/>
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_grocery"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="16dp"
+            android:clipToPadding="false"/>
+
+        <!-- Empty state -->
+        <LinearLayout
+            android:id="@+id/layout_grocery_empty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="32dp"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:src="@drawable/ic_grocery"
+                app:tint="@color/primary_light"
+                android:contentDescription="@null"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Daftar belanja kosong"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="?attr/colorOnBackground"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="Isi meal planner dengan resep favorit untuk generate daftar belanja"
+                android:textSize="13sp"
+                android:textColor="#9E9E9E"
+                android:gravity="center"/>
+        </LinearLayout>
+    </FrameLayout>
+</LinearLayout>

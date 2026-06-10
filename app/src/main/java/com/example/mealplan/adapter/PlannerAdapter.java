@@ -1,118 +1,129 @@
 package com.example.mealplan.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.mealplan.R;
+import com.example.mealplan.activity.DetailActivity;
 import com.example.mealplan.model.PlannerItem;
 import com.example.mealplan.utils.Constants;
-
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class PlannerAdapter extends RecyclerView.Adapter<PlannerAdapter.ViewHolder> {
+public class PlannerAdapter extends RecyclerView.Adapter<PlannerAdapter.DayViewHolder> {
 
     public interface OnPlannerActionListener {
         void onAddClick(String day);
-        void onDeleteClick(PlannerItem item, int position);
+        void onDeleteMealClick(PlannerItem item);
     }
 
     private final Context context;
-    private final PlannerItem[] slots = new PlannerItem[7];
     private final OnPlannerActionListener listener;
+    // Map dari nama hari ke list resep di hari itu
+    private final Map<String, List<PlannerItem>> dayMeals = new HashMap<>();
 
     public PlannerAdapter(Context context, OnPlannerActionListener listener) {
         this.context = context;
         this.listener = listener;
+        // Inisialisasi semua hari dengan list kosong
+        for (String day : Constants.DAYS_OF_WEEK) {
+            dayMeals.put(day, new ArrayList<>());
+        }
     }
 
     public void setPlannerItems(List<PlannerItem> items) {
-        for (int i = 0; i < 7; i++) slots[i] = null;
+        // Reset
+        for (String day : Constants.DAYS_OF_WEEK) {
+            dayMeals.put(day, new ArrayList<>());
+        }
         for (PlannerItem item : items) {
-            for (int i = 0; i < Constants.DAYS_OF_WEEK.length; i++) {
-                if (Constants.DAYS_OF_WEEK[i].equals(item.getDayOfWeek())) {
-                    slots[i] = item;
-                    break;
-                }
-            }
+            List<PlannerItem> list = dayMeals.get(item.getDayOfWeek());
+            if (list != null) list.add(item);
         }
         notifyDataSetChanged();
     }
 
-    public void removeSlot(int position) {
-        slots[position] = null;
-        notifyItemChanged(position);
-    }
-
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_planner, parent, false);
-        return new ViewHolder(view);
+    public DayViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.item_planner_day, parent, false);
+        return new DayViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull DayViewHolder holder, int position) {
         String day = Constants.DAYS_OF_WEEK[position];
-        PlannerItem item = slots[position];
+        List<PlannerItem> meals = dayMeals.get(day);
 
         holder.tvDay.setText(day);
+        holder.btnAdd.setOnClickListener(v -> listener.onAddClick(day));
 
-        if (item != null) {
-            // Slot terisi
-            holder.tvMealName.setText(item.getMealName());
-            holder.tvMealName.setVisibility(View.VISIBLE);
-            holder.cardThumb.setVisibility(View.VISIBLE);
-            holder.tvEmpty.setVisibility(View.GONE);
-            holder.btnAdd.setVisibility(View.GONE);
-            holder.btnDelete.setVisibility(View.VISIBLE);
+        // Clear container dulu
+        holder.containerMeals.removeAllViews();
 
-            Glide.with(context)
-                    .load(item.getMealThumb())
-                    .placeholder(R.drawable.ic_placeholder)
-                    .centerCrop()
-                    .into(holder.imgThumb);
-
-            holder.btnDelete.setOnClickListener(v ->
-                    listener.onDeleteClick(item, holder.getAdapterPosition()));
-
+        if (meals == null || meals.isEmpty()) {
+            holder.cardEmptySlot.setVisibility(View.VISIBLE);
         } else {
-            // Slot kosong
-            holder.tvMealName.setVisibility(View.GONE);
-            holder.cardThumb.setVisibility(View.GONE);
-            holder.tvEmpty.setVisibility(View.VISIBLE);
-            holder.btnAdd.setVisibility(View.VISIBLE);
-            holder.btnDelete.setVisibility(View.GONE);
+            holder.cardEmptySlot.setVisibility(View.GONE);
+            for (PlannerItem meal : meals) {
+                View mealView = LayoutInflater.from(context)
+                        .inflate(R.layout.item_planner_meal, holder.containerMeals, false);
 
-            holder.btnAdd.setOnClickListener(v -> listener.onAddClick(day));
+                ImageView imgThumb = mealView.findViewById(R.id.img_planner_meal_thumb);
+                TextView tvName    = mealView.findViewById(R.id.tv_planner_meal_name);
+                ImageButton btnDel = mealView.findViewById(R.id.btn_planner_meal_delete);
+
+                tvName.setText(meal.getMealName());
+                Glide.with(context)
+                        .load(meal.getMealThumb())
+                        .placeholder(R.drawable.ic_placeholder)
+                        .centerCrop()
+                        .into(imgThumb);
+
+                // Fix 14: klik item buka DetailActivity
+                mealView.setOnClickListener(v -> {
+                    Intent intent = new Intent(context, DetailActivity.class);
+                    intent.putExtra(Constants.INTENT_MEAL_ID,       meal.getMealId());
+                    intent.putExtra(Constants.INTENT_MEAL_NAME,     meal.getMealName());
+                    intent.putExtra(Constants.INTENT_MEAL_THUMB,    meal.getMealThumb());
+                    intent.putExtra(Constants.INTENT_MEAL_CATEGORY, "");
+                    context.startActivity(intent);
+                });
+
+                btnDel.setOnClickListener(v -> listener.onDeleteMealClick(meal));
+
+                holder.containerMeals.addView(mealView);
+            }
         }
     }
 
     @Override
-    public int getItemCount() { return 7; }
+    public int getItemCount() { return Constants.DAYS_OF_WEEK.length; }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvDay, tvMealName, tvEmpty;
-        CardView cardThumb;
-        ImageView imgThumb;
-        ImageButton btnAdd, btnDelete;
+    public static class DayViewHolder extends RecyclerView.ViewHolder {
+        TextView tvDay;
+        ImageButton btnAdd;
+        LinearLayout containerMeals;
+        CardView cardEmptySlot;
 
-        public ViewHolder(@NonNull View itemView) {
+        public DayViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvDay      = itemView.findViewById(R.id.tv_planner_day);
-            tvMealName = itemView.findViewById(R.id.tv_planner_meal_name);
-            tvEmpty    = itemView.findViewById(R.id.tv_planner_empty);
-            cardThumb  = itemView.findViewById(R.id.card_planner_thumb);
-            imgThumb   = itemView.findViewById(R.id.img_planner_thumb);
-            btnAdd     = itemView.findViewById(R.id.btn_planner_add);
-            btnDelete  = itemView.findViewById(R.id.btn_planner_delete);
+            tvDay          = itemView.findViewById(R.id.tv_planner_day);
+            btnAdd         = itemView.findViewById(R.id.btn_planner_add);
+            containerMeals = itemView.findViewById(R.id.container_meals);
+            cardEmptySlot  = itemView.findViewById(R.id.card_empty_slot);
         }
     }
 }

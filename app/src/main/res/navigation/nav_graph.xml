@@ -8,15 +8,20 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.mealplan.fragment.HomeFragment"
-        android:label="Home" />
+        android:label="Home"/>
 
     <fragment
         android:id="@+id/favoritesFragment"
         android:name="com.example.mealplan.fragment.FavoritesFragment"
-        android:label="Favorites" />
+        android:label="Favorites"/>
 
     <fragment
         android:id="@+id/plannerFragment"
         android:name="com.example.mealplan.fragment.PlannerFragment"
-        android:label="Planner" />
+        android:label="Planner"/>
+
+    <fragment
+        android:id="@+id/groceryFragment"
+        android:name="com.example.mealplan.fragment.GroceryFragment"
+        android:label="Belanja"/>
 </navigation>

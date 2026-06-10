@@ -1,7 +1,6 @@
 package com.example.mealplan.fragment;
 
 import android.app.AlertDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +10,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.snackbar.Snackbar;
 import com.example.mealplan.R;
-import com.example.mealplan.activity.GroceryActivity;
 import com.example.mealplan.adapter.PlannerAdapter;
 import com.example.mealplan.database.FavoriteDao;
 import com.example.mealplan.database.PlannerDao;
@@ -41,48 +39,46 @@ public class PlannerFragment extends Fragment {
         plannerDao  = new PlannerDao(requireContext());
         favoriteDao = new FavoriteDao(requireContext());
 
-        plannerAdapter = new PlannerAdapter(requireContext(), new PlannerAdapter.OnPlannerActionListener() {
-            @Override
-            public void onAddClick(String day) {
-                showFavoritePicker(day);
-            }
-            @Override
-            public void onDeleteClick(PlannerItem item, int position) {
-                // Snackbar undo untuk planner juga
-                plannerAdapter.removeSlot(position);
-
-                Snackbar snackbar = Snackbar.make(
-                        requireView(),
-                        item.getMealName() + " dihapus dari " + item.getDayOfWeek(),
-                        Snackbar.LENGTH_LONG
-                );
-                snackbar.setAction("Batalkan", v -> {
-                    executor.execute(() -> {
-                        plannerDao.insertOrReplace(item);
-                        requireActivity().runOnUiThread(() -> loadPlanner());
-                    });
-                });
-                snackbar.addCallback(new Snackbar.Callback() {
+        plannerAdapter = new PlannerAdapter(requireContext(),
+                new PlannerAdapter.OnPlannerActionListener() {
                     @Override
-                    public void onDismissed(Snackbar s, int event) {
-                        if (event != DISMISS_EVENT_ACTION) {
-                            executor.execute(() -> plannerDao.deleteByDay(item.getDayOfWeek()));
-                        }
+                    public void onAddClick(String day) {
+                        showFavoritePicker(day);
+                    }
+
+                    @Override
+                    public void onDeleteMealClick(PlannerItem item) {
+                        // Hapus dari adapter langsung (optimistic update)
+                        executor.execute(() -> {
+                            plannerDao.deleteById(item.getId());
+                            List<PlannerItem> updated = plannerDao.getAll();
+                            requireActivity().runOnUiThread(() -> {
+                                plannerAdapter.setPlannerItems(updated);
+
+                                Snackbar snackbar = Snackbar.make(
+                                        requireView(),
+                                        item.getMealName() + " dihapus dari " + item.getDayOfWeek(),
+                                        Snackbar.LENGTH_LONG);
+
+                                snackbar.setAction("Batalkan", v -> {
+                                    executor.execute(() -> {
+                                        plannerDao.insert(item);
+                                        List<PlannerItem> restored = plannerDao.getAll();
+                                        requireActivity().runOnUiThread(() ->
+                                                plannerAdapter.setPlannerItems(restored));
+                                    });
+                                });
+
+                                snackbar.setActionTextColor(
+                                        getResources().getColor(R.color.primary_light, null));
+                                snackbar.show();
+                            });
+                        });
                     }
                 });
-                snackbar.setActionTextColor(getResources().getColor(R.color.primary_light, null));
-                snackbar.show();
-            }
-        });
 
         rvPlanner.setLayoutManager(new LinearLayoutManager(requireContext()));
         rvPlanner.setAdapter(plannerAdapter);
-
-        // Tombol grocery list
-        view.findViewById(R.id.btn_grocery).setOnClickListener(v -> {
-            startActivity(new Intent(requireContext(), GroceryActivity.class));
-        });
-
         loadPlanner();
     }
 
@@ -128,8 +124,10 @@ public class PlannerFragment extends Fragment {
                                     chosen.getMealThumb()
                             );
                             executor.execute(() -> {
-                                plannerDao.insertOrReplace(item);
-                                requireActivity().runOnUiThread(this::loadPlanner);
+                                plannerDao.insert(item);
+                                List<PlannerItem> updated = plannerDao.getAll();
+                                requireActivity().runOnUiThread(() ->
+                                        plannerAdapter.setPlannerItems(updated));
                             });
                         })
                         .setNegativeButton("Batal", null)

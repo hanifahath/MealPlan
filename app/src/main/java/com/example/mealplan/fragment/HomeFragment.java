@@ -2,15 +2,13 @@ package com.example.mealplan.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
-import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -19,6 +17,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.example.mealplan.R;
 import com.example.mealplan.activity.DetailActivity;
+import com.example.mealplan.activity.SearchActivity;
 import com.example.mealplan.adapter.CategoryAdapter;
 import com.example.mealplan.adapter.MealAdapter;
 import com.example.mealplan.model.Category;
@@ -40,17 +39,11 @@ public class HomeFragment extends Fragment {
     private ProgressBar progressBar;
     private View layoutError;
     private Button btnRetry;
-    private SearchView searchView;
 
     private MealAdapter mealAdapter;
     private CategoryAdapter categoryAdapter;
     private MealApiService apiService;
-    private String currentCategory = "Beef";
-
-    // Debounce untuk search
-    private final Handler searchHandler = new Handler(Looper.getMainLooper());
-    private Runnable searchRunnable;
-    private static final long SEARCH_DEBOUNCE_MS = 500;
+    private String currentCategory = null; // null = semua/default
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -60,10 +53,14 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         initViews(view);
         setupAdapters();
-        setupSearch();
         loadCategories();
+
+        // Search bar → buka SearchActivity
+        view.findViewById(R.id.tv_search_hint).setOnClickListener(v ->
+                startActivity(new Intent(requireContext(), SearchActivity.class)));
 
         // Theme toggle
         view.findViewById(R.id.btn_theme_toggle).setOnClickListener(v ->
@@ -79,7 +76,6 @@ public class HomeFragment extends Fragment {
         progressBar  = view.findViewById(R.id.progress_bar);
         layoutError  = view.findViewById(R.id.layout_error);
         btnRetry     = view.findViewById(R.id.btn_retry);
-        searchView   = view.findViewById(R.id.search_view);
         apiService   = ApiClient.getService();
     }
 
@@ -88,48 +84,25 @@ public class HomeFragment extends Fragment {
         rvMeals.setLayoutManager(new GridLayoutManager(requireContext(), 2));
         rvMeals.setAdapter(mealAdapter);
 
+        // CategoryAdapter dengan support "Semua" chip + unfilter
         categoryAdapter = new CategoryAdapter(requireContext(), categoryName -> {
-            currentCategory = categoryName;
-            // Clear search saat pilih kategori
-            searchView.setQuery("", false);
-            searchView.clearFocus();
-            loadMealsByCategory(categoryName);
+            if (categoryName == null) {
+                // "Semua" dipilih → load random/default
+                currentCategory = null;
+                loadDefaultMeals();
+            } else {
+                currentCategory = categoryName;
+                loadMealsByCategory(categoryName);
+            }
         });
+
         rvCategories.setLayoutManager(
                 new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         rvCategories.setAdapter(categoryAdapter);
 
         btnRetry.setOnClickListener(v -> {
-            if (!searchView.getQuery().toString().isEmpty()) {
-                searchMeals(searchView.getQuery().toString());
-            } else {
-                loadMealsByCategory(currentCategory);
-            }
-        });
-    }
-
-    private void setupSearch() {
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                searchHandler.removeCallbacks(searchRunnable);
-                searchMeals(query);
-                searchView.clearFocus();
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                searchHandler.removeCallbacks(searchRunnable);
-                if (newText.trim().isEmpty()) {
-                    loadMealsByCategory(currentCategory);
-                    return true;
-                }
-                // Debounce 500ms
-                searchRunnable = () -> searchMeals(newText.trim());
-                searchHandler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_MS);
-                return true;
-            }
+            if (currentCategory != null) loadMealsByCategory(currentCategory);
+            else loadDefaultMeals();
         });
     }
 
@@ -141,9 +114,12 @@ public class HomeFragment extends Fragment {
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     List<Category> cats = parseCategories(response.body());
+                    // Tambah "Semua" di posisi pertama
+                    cats.add(0, new Category(null, null, null));
                     categoryAdapter.setCategories(cats);
-                    if (!cats.isEmpty()) {
-                        currentCategory = cats.get(0).getName();
+                    // Default load dengan kategori pertama yang nyata
+                    if (cats.size() > 1) {
+                        currentCategory = cats.get(1).getName();
                         loadMealsByCategory(currentCategory);
                     }
                 }
@@ -172,29 +148,9 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void searchMeals(String query) {
-        if (!NetworkUtils.isConnected(requireContext())) { showError(); return; }
-        showLoading();
-        apiService.searchMeals(query).enqueue(new Callback<JsonObject>() {
-            @Override
-            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-                hideLoading();
-                if (response.isSuccessful() && response.body() != null) {
-                    List<Meal> meals = parseMeals(response.body(), "");
-                    if (meals.isEmpty()) {
-                        Toast.makeText(requireContext(),
-                                "Resep \"" + query + "\" tidak ditemukan",
-                                Toast.LENGTH_SHORT).show();
-                    }
-                    mealAdapter.setMeals(meals);
-                    showContent();
-                } else showError();
-            }
-            @Override
-            public void onFailure(Call<JsonObject> call, Throwable t) {
-                hideLoading(); showError();
-            }
-        });
+    private void loadDefaultMeals() {
+        // Load kategori "Chicken" sebagai default saat "Semua" dipilih
+        loadMealsByCategory("Chicken");
     }
 
     private void loadRandomMeal() {
@@ -210,16 +166,15 @@ public class HomeFragment extends Fragment {
                         JsonArray meals = response.body().getAsJsonArray("meals");
                         if (meals != null && meals.size() > 0) {
                             JsonObject o = meals.get(0).getAsJsonObject();
-                            String id    = o.get("idMeal").getAsString();
-                            String name  = o.get("strMeal").getAsString();
-                            String thumb = o.get("strMealThumb").getAsString();
-                            String cat   = o.has("strCategory") ? o.get("strCategory").getAsString() : "";
-
                             Intent intent = new Intent(requireContext(), DetailActivity.class);
-                            intent.putExtra(Constants.INTENT_MEAL_ID,       id);
-                            intent.putExtra(Constants.INTENT_MEAL_NAME,     name);
-                            intent.putExtra(Constants.INTENT_MEAL_THUMB,    thumb);
-                            intent.putExtra(Constants.INTENT_MEAL_CATEGORY, cat);
+                            intent.putExtra(Constants.INTENT_MEAL_ID,
+                                    o.get("idMeal").getAsString());
+                            intent.putExtra(Constants.INTENT_MEAL_NAME,
+                                    o.get("strMeal").getAsString());
+                            intent.putExtra(Constants.INTENT_MEAL_THUMB,
+                                    o.get("strMealThumb").getAsString());
+                            intent.putExtra(Constants.INTENT_MEAL_CATEGORY,
+                                    o.has("strCategory") ? o.get("strCategory").getAsString() : "");
                             startActivity(intent);
                         }
                     } catch (Exception e) { e.printStackTrace(); }
@@ -232,7 +187,7 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    // --- Parser ---
+    // --- Parsers ---
     private List<Category> parseCategories(JsonObject json) {
         List<Category> list = new ArrayList<>();
         try {
@@ -267,12 +222,19 @@ public class HomeFragment extends Fragment {
     }
 
     // --- State helpers ---
-    private void showLoading() {
+    private void showLoading()  {
         progressBar.setVisibility(View.VISIBLE);
         rvMeals.setVisibility(View.GONE);
         layoutError.setVisibility(View.GONE);
     }
     private void hideLoading()  { progressBar.setVisibility(View.GONE); }
-    private void showContent()  { rvMeals.setVisibility(View.VISIBLE); layoutError.setVisibility(View.GONE); }
-    private void showError()    { progressBar.setVisibility(View.GONE); rvMeals.setVisibility(View.GONE); layoutError.setVisibility(View.VISIBLE); }
+    private void showContent()  {
+        rvMeals.setVisibility(View.VISIBLE);
+        layoutError.setVisibility(View.GONE);
+    }
+    private void showError()    {
+        progressBar.setVisibility(View.GONE);
+        rvMeals.setVisibility(View.GONE);
+        layoutError.setVisibility(View.VISIBLE);
+    }
 }

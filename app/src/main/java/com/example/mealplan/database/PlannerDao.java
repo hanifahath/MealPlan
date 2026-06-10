@@ -17,10 +17,8 @@ public class PlannerDao {
         dbHelper = DatabaseHelper.getInstance(context);
     }
 
-    // Tambah atau ganti resep untuk hari tertentu
-    // Karena satu hari = satu resep, kita hapus dulu lalu insert baru
-    public boolean insertOrReplace(PlannerItem item) {
-        deleteByDay(item.getDayOfWeek());
+    // Insert resep ke hari tertentu - TANPA hapus yang lama (support multi-meal)
+    public boolean insert(PlannerItem item) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(Constants.PLAN_COL_DAY,        item.getDayOfWeek());
@@ -31,7 +29,15 @@ public class PlannerDao {
         return result != -1;
     }
 
-    // Hapus resep dari satu hari
+    // Hapus resep spesifik berdasarkan id row
+    public boolean deleteById(int id) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        int rows = db.delete(Constants.TABLE_PLANNER,
+                Constants.PLAN_COL_ID + "=?", new String[]{String.valueOf(id)});
+        return rows > 0;
+    }
+
+    // Hapus semua resep di satu hari
     public boolean deleteByDay(String day) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         int rows = db.delete(Constants.TABLE_PLANNER,
@@ -39,36 +45,36 @@ public class PlannerDao {
         return rows > 0;
     }
 
-    // Ambil semua planner (diurutkan sesuai urutan hari: Senin–Minggu)
+    // Ambil semua planner
     public List<PlannerItem> getAll() {
         List<PlannerItem> list = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor cursor = db.query(Constants.TABLE_PLANNER,
-                null, null, null, null, null, null);
-
+                null, null, null, null, null,
+                Constants.PLAN_COL_ID + " ASC");
         if (cursor != null && cursor.moveToFirst()) {
-            do {
-                list.add(cursorToItem(cursor));
-            } while (cursor.moveToNext());
+            do { list.add(cursorToItem(cursor)); }
+            while (cursor.moveToNext());
             cursor.close();
         }
         return list;
     }
 
-    // Ambil planner untuk satu hari spesifik (null jika kosong)
-    public PlannerItem getByDay(String day) {
+    // Ambil semua resep di satu hari
+    public List<PlannerItem> getByDay(String day) {
+        List<PlannerItem> list = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor cursor = db.query(Constants.TABLE_PLANNER,
                 null,
                 Constants.PLAN_COL_DAY + "=?",
-                new String[]{day}, null, null, null);
-
-        PlannerItem item = null;
+                new String[]{day}, null, null,
+                Constants.PLAN_COL_ID + " ASC");
         if (cursor != null && cursor.moveToFirst()) {
-            item = cursorToItem(cursor);
+            do { list.add(cursorToItem(cursor)); }
+            while (cursor.moveToNext());
             cursor.close();
         }
-        return item;
+        return list;
     }
 
     private PlannerItem cursorToItem(Cursor cursor) {

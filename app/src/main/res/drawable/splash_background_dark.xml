@@ -1,37 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-
     <item>
         <shape android:shape="rectangle">
             <solid android:color="#1A1210"/>
         </shape>
     </item>
-
-    <item
-        android:top="-180dp"
-        android:right="-180dp"
-        android:bottom="340dp"
-        android:left="120dp">
-        <shape android:shape="oval">
-            <solid android:color="#2C1A10"/>
-        </shape>
-    </item>
-
-    <item
-        android:top="380dp"
-        android:right="200dp"
-        android:bottom="-80dp"
-        android:left="-80dp">
-        <shape android:shape="oval">
-            <solid android:color="#261510"/>
-        </shape>
-    </item>
-
-    <item
-        android:top="200dp"
-        android:right="120dp"
-        android:bottom="240dp"
-        android:left="120dp"
-        android:drawable="@drawable/ic_splash_logo_dark"/>
-
 </layer-list>

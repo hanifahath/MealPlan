@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.mealplan.utils.ThemeUtils;
 
@@ -16,21 +15,21 @@ public class SplashActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Apply theme SEBELUM super agar windowBackground splash langsung muncul
         ThemeUtils.applyTheme(this);
         super.onCreate(savedInstanceState);
-
-        // Fix: pakai OnBackPressedCallback, bukan override onBackPressed()
-        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                // Nonaktifkan back press di splash — sengaja dibiarkan kosong
-            }
-        });
+        // Tidak perlu setContentView — windowBackground dari theme yang handle tampilan
 
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             startActivity(new Intent(SplashActivity.this, MainActivity.class));
             finish();
+            // Transisi halus: fade in ke MainActivity
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         }, SPLASH_DURATION_MS);
+    }
+
+    @Override
+    public void onBackPressed() {
+        // Nonaktifkan back press di splash agar tidak bisa di-cancel
     }
 }

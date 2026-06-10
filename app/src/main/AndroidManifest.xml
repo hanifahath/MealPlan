@@ -34,6 +34,8 @@
 
         <activity android:name=".activity.DetailActivity"/>
         <activity android:name=".activity.GroceryActivity"/>
+        <activity android:name=".activity.SearchActivity"
+            android:windowSoftInputMode="adjustResize"/>
 
     </application>
 

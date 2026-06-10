@@ -16,12 +16,13 @@ import java.util.List;
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHolder> {
 
     public interface OnCategoryClickListener {
+        // null = "Semua" dipilih
         void onCategoryClick(String categoryName);
     }
 
     private final Context context;
     private List<Category> categories = new ArrayList<>();
-    private int selectedPosition = 0;
+    private int selectedPosition = 1; // default pilih kategori pertama (index 1, setelah "Semua")
     private final OnCategoryClickListener listener;
 
     public CategoryAdapter(Context context, OnCategoryClickListener listener) {
@@ -44,15 +45,18 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Category cat = categories.get(position);
-        holder.tvCategory.setText(cat.getName());
+        // Index 0 adalah "Semua" (name=null)
+        String displayName = (cat.getName() == null) ? "Semua" : cat.getName();
+        holder.tvCategory.setText(displayName);
 
-        // Highlight kategori yang dipilih
         if (position == selectedPosition) {
             holder.tvCategory.setBackgroundResource(R.drawable.bg_chip_selected);
-            holder.tvCategory.setTextColor(ContextCompat.getColor(context, R.color.chip_text_selected));
+            holder.tvCategory.setTextColor(
+                    ContextCompat.getColor(context, R.color.chip_text_selected));
         } else {
             holder.tvCategory.setBackgroundResource(R.drawable.bg_chip_normal);
-            holder.tvCategory.setTextColor(ContextCompat.getColor(context, R.color.chip_text_normal));
+            holder.tvCategory.setTextColor(
+                    ContextCompat.getColor(context, R.color.chip_text_normal));
         }
 
         holder.itemView.setOnClickListener(v -> {
@@ -60,6 +64,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
             selectedPosition = holder.getAdapterPosition();
             notifyItemChanged(prev);
             notifyItemChanged(selectedPosition);
+            // Kirim null kalau "Semua"
             listener.onCategoryClick(cat.getName());
         });
     }
@@ -69,7 +74,6 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvCategory;
-
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvCategory = itemView.findViewById(R.id.tv_category_name);

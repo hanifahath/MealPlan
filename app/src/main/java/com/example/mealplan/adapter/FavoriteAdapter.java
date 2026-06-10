@@ -3,10 +3,12 @@ package com.example.mealplan.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,27 +22,35 @@ import java.util.List;
 
 public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHolder> {
 
-    public interface OnDeleteClickListener {
+    public interface OnFavoriteActionListener {
         void onDeleteClick(FavoriteMeal meal, int position);
+        void onShareClick(FavoriteMeal meal);
     }
 
     private final Context context;
     private List<FavoriteMeal> favorites = new ArrayList<>();
-    private final OnDeleteClickListener deleteListener;
+    private final OnFavoriteActionListener listener;
 
-    public FavoriteAdapter(Context context, OnDeleteClickListener deleteListener) {
+    public FavoriteAdapter(Context context, OnFavoriteActionListener listener) {
         this.context = context;
-        this.deleteListener = deleteListener;
+        this.listener = listener;
     }
 
     public void setFavorites(List<FavoriteMeal> favorites) {
-        this.favorites = favorites;
+        this.favorites = new ArrayList<>(favorites);
         notifyDataSetChanged();
     }
 
     public void removeItem(int position) {
-        favorites.remove(position);
-        notifyItemRemoved(position);
+        if (position >= 0 && position < favorites.size()) {
+            favorites.remove(position);
+            notifyItemRemoved(position);
+        }
+    }
+
+    public void addItem(FavoriteMeal meal) {
+        favorites.add(0, meal);
+        notifyItemInserted(0);
     }
 
     @NonNull
@@ -53,6 +63,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         FavoriteMeal meal = favorites.get(position);
+
         holder.tvName.setText(meal.getMealName());
         holder.tvCategory.setText(meal.getMealCategory());
 
@@ -62,7 +73,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
                 .centerCrop()
                 .into(holder.imgThumb);
 
-        // Buka detail saat card diklik
+        // Klik card → buka detail
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, DetailActivity.class);
             intent.putExtra(Constants.INTENT_MEAL_ID,       meal.getMealId());
@@ -72,9 +83,23 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
             context.startActivity(intent);
         });
 
-        // Tombol hapus dari favorit
-        holder.btnDelete.setOnClickListener(v ->
-                deleteListener.onDeleteClick(meal, holder.getAdapterPosition()));
+        // Titik tiga → popup menu
+        holder.btnMenu.setOnClickListener(v -> {
+            PopupMenu popup = new PopupMenu(context, holder.btnMenu);
+            popup.getMenu().add(0, 1, 0, "Bagikan");
+            popup.getMenu().add(0, 2, 1, "Hapus dari favorit");
+            popup.setOnMenuItemClickListener(item -> {
+                int pos = holder.getAdapterPosition();
+                if (pos == RecyclerView.NO_ID) return false;
+                if (item.getItemId() == 1) {
+                    listener.onShareClick(meal);
+                } else if (item.getItemId() == 2) {
+                    listener.onDeleteClick(meal, pos);
+                }
+                return true;
+            });
+            popup.show();
+        });
     }
 
     @Override
@@ -83,14 +108,14 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView imgThumb;
         TextView tvName, tvCategory;
-        ImageButton btnDelete;
+        ImageButton btnMenu;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             imgThumb   = itemView.findViewById(R.id.img_fav_thumb);
             tvName     = itemView.findViewById(R.id.tv_fav_name);
             tvCategory = itemView.findViewById(R.id.tv_fav_category);
-            btnDelete  = itemView.findViewById(R.id.btn_fav_delete);
+            btnMenu    = itemView.findViewById(R.id.btn_fav_menu);
         }
     }
 }
