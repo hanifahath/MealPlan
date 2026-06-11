@@ -23,6 +23,16 @@ public class GroceryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     // Raw items tanpa header — untuk rebuild list
     private List<GroceryItem> rawItems = new ArrayList<>();
 
+    private OnProgressChangedListener progressListener;
+
+    public interface OnProgressChangedListener {
+        void onProgressChanged(int checked, int total);
+    }
+
+    public void setOnProgressChangedListener(OnProgressChangedListener listener) {
+        this.progressListener = listener;
+    }
+
     public GroceryAdapter(Context context) {
         this.context = context;
     }
@@ -64,6 +74,17 @@ public class GroceryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
 
         notifyDataSetChanged();
+        notifyProgress();
+    }
+
+    private void notifyProgress() {
+        if (progressListener == null) return;
+        int total = rawItems.size();
+        int checked = 0;
+        for (GroceryItem item : rawItems) {
+            if (item.isChecked()) checked++;
+        }
+        progressListener.onProgressChanged(checked, total);
     }
 
     public void clearChecked() {

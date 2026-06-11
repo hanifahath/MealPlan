@@ -65,6 +65,7 @@ public class GroceryFragment extends Fragment {
         adapter = new GroceryAdapter(requireContext());
         rvGrocery.setLayoutManager(new LinearLayoutManager(requireContext()));
         rvGrocery.setAdapter(adapter);
+        adapter.setOnProgressChangedListener(this::updateProgress);
 
         btnClearChecked.setOnClickListener(v -> adapter.clearChecked());
 
@@ -119,16 +120,34 @@ public class GroceryFragment extends Fragment {
                     rvGrocery.setVisibility(View.VISIBLE);
                     adapter.setItems(finalItems);
                     tvSubtitle.setText(finalDays + " hari · " + finalItems.size() + " bahan");
-                    tvInfo.setText(finalItems.size() + " bahan dari " + finalDays + " resep. Centang yang sudah dibeli.");
                 }
             });
         });
+    }
+
+    private void updateProgress(int checked, int total) {
+        if (total <= 0) {
+            progressGrocery.setProgress(0);
+            tvInfo.setText("");
+            return;
+        }
+        int pct = (int) ((checked / (float) total) * 100);
+        progressGrocery.setProgress(pct);
+        if (checked == 0) {
+            tvInfo.setText(total + " bahan. Centang yang sudah dibeli.");
+        } else if (checked >= total) {
+            tvInfo.setText("Selesai! Semua " + total + " bahan sudah dibeli 🎉");
+        } else {
+            tvInfo.setText(checked + " dari " + total + " bahan sudah dibeli");
+        }
     }
 
     private void showEmpty() {
         layoutEmpty.setVisibility(View.VISIBLE);
         rvGrocery.setVisibility(View.GONE);
         tvSubtitle.setText("Kosong");
+        progressGrocery.setProgress(0);
+        tvInfo.setText("");
     }
 
     private List<GroceryItem> parseIngredients(String json, String sourceMeal) {
