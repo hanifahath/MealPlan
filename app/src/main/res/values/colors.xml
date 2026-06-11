@@ -16,7 +16,7 @@
 
     <!-- Chip -->
     <color name="chip_text_selected">#FFFFFF</color>
-    <color name="chip_text_normal">#6D4C41</color>
+    <color name="chip_text_normal">#5D4037</color>
     <color name="chip_bg_normal">#FBE9E7</color>
 
     <!-- Neutral -->

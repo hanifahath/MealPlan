@@ -28,8 +28,6 @@ public class FavoritesFragment extends Fragment {
     private FavoriteAdapter adapter;
     private FavoriteDao favoriteDao;
     private final Executor executor = Executors.newSingleThreadExecutor();
-
-    // Sort: 0=newest, 1=oldest, 2=az
     private int currentSort = 0;
 
     @Override
@@ -46,66 +44,51 @@ public class FavoritesFragment extends Fragment {
         favoriteDao = new FavoriteDao(requireContext());
 
         adapter = new FavoriteAdapter(requireContext(),
-            new FavoriteAdapter.OnFavoriteActionListener() {
-                @Override
-                public void onDeleteClick(FavoriteMeal meal, int position) {
-                    adapter.removeItem(position);
-                    checkEmpty();
-
-                    Snackbar snackbar = Snackbar.make(
-                            requireView(),
-                            meal.getMealName() + " dihapus dari favorit",
-                            Snackbar.LENGTH_LONG);
-
-                    snackbar.setAction("Batalkan", v -> {
-                        executor.execute(() -> {
-                            favoriteDao.insert(meal);
-                            requireActivity().runOnUiThread(() -> loadFavorites());
+                new FavoriteAdapter.OnFavoriteActionListener() {
+                    @Override
+                    public void onDeleteClick(FavoriteMeal meal, int position) {
+                        adapter.removeItem(position);
+                        checkEmpty();
+                        Snackbar snackbar = Snackbar.make(requireView(),
+                                meal.getMealName() + " dihapus dari favorit",
+                                Snackbar.LENGTH_LONG);
+                        snackbar.setAction("Batalkan", v -> {
+                            executor.execute(() -> {
+                                favoriteDao.insert(meal);
+                                requireActivity().runOnUiThread(this::reloadAfterUndo);
+                            });
                         });
-                    });
-
-                    snackbar.addCallback(new Snackbar.Callback() {
-                        @Override
-                        public void onDismissed(Snackbar s, int event) {
-                            if (event != DISMISS_EVENT_ACTION) {
-                                executor.execute(() -> favoriteDao.delete(meal.getMealId()));
+                        snackbar.addCallback(new Snackbar.Callback() {
+                            @Override public void onDismissed(Snackbar s, int event) {
+                                if (event != DISMISS_EVENT_ACTION)
+                                    executor.execute(() -> favoriteDao.delete(meal.getMealId()));
                             }
-                        }
-                    });
+                        });
+                        snackbar.setActionTextColor(
+                                getResources().getColor(R.color.primary_light, null));
+                        snackbar.show();
+                    }
+                    private void reloadAfterUndo() { loadFavorites(); }
 
-                    snackbar.setActionTextColor(
-                            getResources().getColor(R.color.primary_light, null));
-                    snackbar.show();
-                }
+                    @Override
+                    public void onShareClick(FavoriteMeal meal) {
+                        String text = "Resep: " + meal.getMealName()
+                                + "\nKategori: " + meal.getMealCategory()
+                                + "\n\nDibagikan dari MealPlan App";
+                        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                        shareIntent.setType("text/plain");
+                        shareIntent.putExtra(Intent.EXTRA_TEXT, text);
+                        startActivity(Intent.createChooser(shareIntent, "Bagikan " + meal.getMealName()));
+                    }
+                });
 
-                @Override
-                public void onShareClick(FavoriteMeal meal) {
-                    String text = "🍽️ " + meal.getMealName()
-                            + "\n📂 " + meal.getMealCategory()
-                            + "\n\nDibagikan dari MealPlan App";
-                    Intent shareIntent = new Intent(Intent.ACTION_SEND);
-                    shareIntent.setType("text/plain");
-                    shareIntent.putExtra(Intent.EXTRA_TEXT, text);
-                    startActivity(Intent.createChooser(shareIntent,
-                            "Bagikan " + meal.getMealName()));
-                }
-            });
-
-        // Grid 2 kolom
         rvFavorites.setLayoutManager(new GridLayoutManager(requireContext(), 2));
         rvFavorites.setAdapter(adapter);
-
-        // Sort button
         view.findViewById(R.id.btn_sort).setOnClickListener(v -> showSortDialog());
-
         loadFavorites();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        loadFavorites();
-    }
+    @Override public void onResume() { super.onResume(); loadFavorites(); }
 
     public void loadFavorites() {
         executor.execute(() -> {
@@ -113,7 +96,8 @@ public class FavoritesFragment extends Fragment {
             applySortInPlace(list);
             requireActivity().runOnUiThread(() -> {
                 adapter.setFavorites(list);
-                tvFavCount.setText(list.size() + " resep");
+                // Plain text, bukan pill
+                tvFavCount.setText(list.size() + " resep tersimpan");
                 checkEmpty();
             });
         });
@@ -124,24 +108,15 @@ public class FavoritesFragment extends Fragment {
         new androidx.appcompat.app.AlertDialog.Builder(requireContext())
                 .setTitle("Urutkan berdasarkan")
                 .setSingleChoiceItems(options, currentSort, (dialog, which) -> {
-                    currentSort = which;
-                    dialog.dismiss();
-                    loadFavorites();
-                })
-                .show();
+                    currentSort = which; dialog.dismiss(); loadFavorites();
+                }).show();
     }
 
     private void applySortInPlace(List<FavoriteMeal> list) {
         switch (currentSort) {
-            case 0: // newest — urutan default dari DB (id DESC sudah dari DAO)
-                break;
-            case 1: // oldest — balik urutan
-                Collections.reverse(list);
-                break;
-            case 2: // A–Z
-                Collections.sort(list, (a, b) ->
-                        a.getMealName().compareToIgnoreCase(b.getMealName()));
-                break;
+            case 1: Collections.reverse(list); break;
+            case 2: Collections.sort(list, (a, b) ->
+                    a.getMealName().compareToIgnoreCase(b.getMealName())); break;
         }
     }
 

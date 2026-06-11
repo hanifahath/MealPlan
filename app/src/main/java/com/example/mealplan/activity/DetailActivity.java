@@ -13,7 +13,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 import com.bumptech.glide.Glide;
@@ -111,7 +110,7 @@ public class DetailActivity extends AppCompatActivity {
             Glide.with(this).load(mealThumb).centerCrop().into(imgThumb);
         }
 
-        btnBack.setOnClickListener(v -> onBackPressed());
+        btnBack.setOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
         btnFavorite.setOnClickListener(v -> toggleFavorite());
         btnShare.setOnClickListener(v -> shareRecipe());
     }
@@ -332,7 +331,7 @@ public class DetailActivity extends AppCompatActivity {
         public void onViewCreated(View view, Bundle savedInstanceState) {
             super.onViewCreated(view, savedInstanceState);
             if (pendingText != null) {
-                ((TextView) view.findViewById(R.id.tv_instructions_tab)).setText(pendingText);
+                buildSteps(view, pendingText);
                 pendingText = null;
             }
         }
@@ -340,13 +339,64 @@ public class DetailActivity extends AppCompatActivity {
         public void setInstructions(String text) {
             View view = getView();
             if (view != null) {
-                ((TextView) view.findViewById(R.id.tv_instructions_tab))
-                        .setText(text != null ? text : "Instruksi tidak tersedia.");
+                buildSteps(view, text != null ? text : "Instruksi tidak tersedia.");
             } else {
                 pendingText = text;
             }
         }
-    }
 
-    
+        private void buildSteps(View root, String text) {
+            android.widget.LinearLayout container =
+                    root.findViewById(R.id.container_steps);
+            container.removeAllViews();
+
+            // Pisahkan per baris/paragraf yang tidak kosong
+            String[] rawSteps = text.split("\r?\n+");
+            java.util.List<String> steps = new java.util.ArrayList<>();
+            for (String s : rawSteps) {
+                String trimmed = s.trim();
+                if (!trimmed.isEmpty()) steps.add(trimmed);
+            }
+
+            // Kalau hanya 1 blok panjang, split per kalimat
+            if (steps.size() <= 2 && text.length() > 200) {
+                steps.clear();
+                for (String s : text.split("(?<=[.!?])\\s+")) {
+                    String trimmed = s.trim();
+                    if (!trimmed.isEmpty()) steps.add(trimmed);
+                }
+            }
+
+            if (steps.isEmpty()) {
+                // Fallback ke plain text
+                TextView tvFallback = root.findViewById(R.id.tv_instructions_tab);
+                tvFallback.setVisibility(View.VISIBLE);
+                tvFallback.setText(text);
+                return;
+            }
+
+            android.view.LayoutInflater inf = android.view.LayoutInflater.from(requireContext());
+            for (int i = 0; i < steps.size(); i++) {
+                View stepView = inf.inflate(R.layout.item_instruction_step, container, false);
+                ((TextView) stepView.findViewById(R.id.tv_step_number))
+                        .setText(String.valueOf(i + 1));
+                ((TextView) stepView.findViewById(R.id.tv_step_text))
+                        .setText(steps.get(i));
+                container.addView(stepView);
+
+                // Divider tipis antar step
+                View divider = new View(requireContext());
+                android.widget.LinearLayout.LayoutParams lp =
+                        new android.widget.LinearLayout.LayoutParams(
+                                android.widget.LinearLayout.LayoutParams.MATCH_PARENT, 1);
+                int margin = (int)(16 * getResources().getDisplayMetrics().density);
+                lp.setMarginStart(margin + 42); // indent setelah nomor
+                lp.setMarginEnd(margin);
+                divider.setLayoutParams(lp);
+                divider.setBackgroundColor(
+                        getResources().getColor(R.color.divider_color, null));
+                container.addView(divider);
+            }
+        }
+    }
 }

@@ -18,28 +18,29 @@
         android:paddingBottom="8dp"
         android:gravity="center_vertical">
 
-        <TextView
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/favorites"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="?attr/colorOnBackground"/>
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tv_fav_count"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
-            android:paddingTop="4dp"
-            android:paddingBottom="4dp"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            android:textColor="@color/primary_color"
-            android:background="@drawable/bg_chip_normal"
-            android:layout_marginEnd="8dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/favorites"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="?attr/colorOnBackground"/>
+
+            <!-- Counter sebagai plain text bukan pill -->
+            <TextView
+                android:id="@+id/tv_fav_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textSize="12sp"
+                android:textColor="#9E9E9E"/>
+        </LinearLayout>
 
         <!-- Sort button -->
         <ImageButton
@@ -57,7 +58,6 @@
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <!-- Grid RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_favorites"
             android:layout_width="match_parent"

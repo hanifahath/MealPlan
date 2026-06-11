@@ -23,7 +23,6 @@
             android:layout_height="52dp"
             app:cardCornerRadius="8dp"
             app:cardElevation="0dp">
-
             <ImageView
                 android:id="@+id/img_planner_meal_thumb"
                 android:layout_width="match_parent"
@@ -46,14 +45,14 @@
             android:ellipsize="end"
             android:textColor="?attr/colorOnSurface"/>
 
-        <!-- Hapus -->
+        <!-- Delete: abu-abu netral, bukan merah -->
         <ImageButton
             android:id="@+id/btn_planner_meal_delete"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:src="@drawable/ic_delete"
             android:background="?attr/selectableItemBackgroundBorderless"
-            app:tint="@color/error_color"
+            app:tint="#BDBDBD"
             android:contentDescription="@string/delete"/>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

@@ -35,6 +35,7 @@ public class GroceryFragment extends Fragment {
     private LinearLayout layoutEmpty;
     private TextView tvSubtitle, tvInfo;
     private Button btnClearChecked;
+    private android.widget.ProgressBar progressGrocery;
     private GroceryAdapter adapter;
 
     private PlannerDao plannerDao;
@@ -59,6 +60,7 @@ public class GroceryFragment extends Fragment {
         tvSubtitle      = view.findViewById(R.id.tv_grocery_subtitle);
         tvInfo          = view.findViewById(R.id.tv_grocery_info);
         btnClearChecked = view.findViewById(R.id.btn_clear_checked);
+        progressGrocery = view.findViewById(R.id.progress_grocery);
 
         adapter = new GroceryAdapter(requireContext());
         rvGrocery.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -143,6 +145,14 @@ public class GroceryFragment extends Fragment {
             }
         } catch (Exception e) { e.printStackTrace(); }
         return list;
+    }
+
+    private void updateProgress(int checked, int total) {
+        if (progressGrocery == null || total == 0) return;
+        int pct = (int)((checked / (float) total) * 100);
+        progressGrocery.setProgress(pct);
+        if (tvInfo != null)
+            tvInfo.setText(checked + " dari " + total + " sudah dibeli");
     }
 
     private void shareGroceryList() {

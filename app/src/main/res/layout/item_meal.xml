@@ -6,53 +6,61 @@
     android:layout_height="wrap_content"
     android:layout_margin="6dp"
     android:foreground="?attr/selectableItemBackground"
-    app:cardCornerRadius="12dp"
+    app:cardCornerRadius="14dp"
     app:cardElevation="2dp"
     app:cardBackgroundColor="?attr/colorSurface">
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="180dp">
 
+        <!-- Foto resep -->
         <ImageView
             android:id="@+id/img_meal_thumb"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_height="match_parent"
             android:scaleType="centerCrop"
             android:contentDescription="@string/meal_image"/>
 
-        <LinearLayout
+        <!-- Gradient gelap di bawah foto -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_gravity="bottom"
+            android:background="@drawable/gradient_card_bottom"/>
+
+        <!-- Badge kategori pojok kiri atas -->
+        <TextView
+            android:id="@+id/tv_meal_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/bg_badge_category"
+            android:visibility="gone"/>
+
+        <!-- Nama resep overlay di bawah foto -->
+        <TextView
+            android:id="@+id/tv_meal_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="10dp">
+            android:layout_gravity="bottom"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingBottom="10dp"
+            android:paddingTop="4dp"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:lineSpacingMultiplier="1.2"
+            android:textColor="#FFFFFF"/>
+    </FrameLayout>
 
-            <TextView
-                android:id="@+id/tv_meal_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="13sp"
-                android:textStyle="bold"
-                android:maxLines="2"
-                android:ellipsize="end"
-                android:lineSpacingMultiplier="1.2"
-                android:textColor="?attr/colorOnSurface"/>
-
-            <TextView
-                android:id="@+id/tv_meal_category"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                android:paddingTop="2dp"
-                android:paddingBottom="2dp"
-                android:textSize="10sp"
-                android:textStyle="bold"
-                android:background="@drawable/bg_chip_normal"
-                android:textColor="@color/chip_text_normal"
-                android:visibility="gone"/>
-        </LinearLayout>
-    </LinearLayout>
 </androidx.cardview.widget.CardView>

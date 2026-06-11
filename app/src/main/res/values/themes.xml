@@ -36,4 +36,12 @@
         <item name="android:letterSpacing">-0.01</item>
     </style>
 
+
+    <!-- Tab text: bold saat aktif, lighter saat tidak aktif -->
+    <style name="TabTextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">13sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="textAllCaps">false</item>
+    </style>
+
 </resources>
