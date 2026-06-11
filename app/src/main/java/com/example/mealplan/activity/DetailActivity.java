@@ -113,6 +113,18 @@ public class DetailActivity extends AppCompatActivity {
         btnBack.setOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
         btnFavorite.setOnClickListener(v -> toggleFavorite());
         btnShare.setOnClickListener(v -> shareRecipe());
+
+        final int baseMargin = (int) (14 * getResources().getDisplayMetrics().density);
+        androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(btnBack, (v, insets) -> {
+            int topInset = insets.getInsets(
+                    androidx.core.view.WindowInsetsCompat.Type.systemBars()).top;
+            android.view.ViewGroup.MarginLayoutParams lp =
+                    (android.view.ViewGroup.MarginLayoutParams) v.getLayoutParams();
+            lp.topMargin = baseMargin + topInset;
+            v.setLayoutParams(lp);
+            return insets;
+        });
+        androidx.core.view.ViewCompat.requestApplyInsets(btnBack);
     }
 
     private void setupTabs() {
