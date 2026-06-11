@@ -8,7 +8,6 @@
     android:background="?android:attr/colorBackground"
     android:fitsSystemWindows="true">
 
-    <!-- Search bar row -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -73,19 +72,16 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- Divider -->
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/divider_color"/>
 
-    <!-- Content: recent search / results -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <!-- State default: recent search -->
         <LinearLayout
             android:id="@+id/layout_recent"
             android:layout_width="match_parent"
@@ -107,7 +103,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
-            <!-- Empty recent -->
             <TextView
                 android:id="@+id/tv_no_recent"
                 android:layout_width="match_parent"
@@ -120,7 +115,6 @@
                 android:visibility="gone"/>
         </LinearLayout>
 
-        <!-- State loading -->
         <ProgressBar
             android:id="@+id/progress_search"
             android:layout_width="wrap_content"
@@ -129,7 +123,13 @@
             android:indeterminateTint="@color/primary_color"
             android:visibility="gone"/>
 
-        <!-- State hasil pencarian -->
+        <include
+            android:id="@+id/skeleton_search"
+            layout="@layout/view_skeleton_grid"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"/>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_search_results"
             android:layout_width="match_parent"
@@ -140,7 +140,6 @@
             android:clipToPadding="false"
             android:visibility="gone"/>
 
-        <!-- State tidak ada hasil -->
         <LinearLayout
             android:id="@+id/layout_no_result"
             android:layout_width="match_parent"
@@ -176,7 +175,6 @@
                 android:textColor="#9E9E9E"/>
         </LinearLayout>
 
-        <!-- State gagal jaringan + tombol coba lagi -->
         <LinearLayout
             android:id="@+id/layout_search_error"
             android:layout_width="match_parent"

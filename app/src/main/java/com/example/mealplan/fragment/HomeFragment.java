@@ -1,5 +1,6 @@
 package com.example.mealplan.fragment;
 
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -27,6 +28,7 @@ import com.example.mealplan.network.MealApiService;
 import com.example.mealplan.network.NetworkUtils;
 import com.example.mealplan.utils.Constants;
 import com.example.mealplan.utils.ThemeUtils;
+import com.example.mealplan.utils.ViewUtils;
 import java.util.ArrayList;
 import java.util.List;
 import retrofit2.Call;
@@ -40,6 +42,8 @@ public class HomeFragment extends Fragment {
     private View layoutError;
     private Button btnRetry;
     private androidx.swiperefreshlayout.widget.SwipeRefreshLayout swipeRefresh;
+    private View skeleton;
+    private ObjectAnimator shimmerAnim;
 
     private MealAdapter mealAdapter;
     private CategoryAdapter categoryAdapter;
@@ -77,6 +81,7 @@ public class HomeFragment extends Fragment {
         swipeRefresh = view.findViewById(R.id.swipe_refresh);
         swipeRefresh.setColorSchemeResources(R.color.primary_color);
         swipeRefresh.setOnRefreshListener(this::refreshHome);
+        skeleton     = view.findViewById(R.id.skeleton);
         apiService   = ApiClient.getService();
     }
 
@@ -232,26 +237,37 @@ public class HomeFragment extends Fragment {
     }
 
     private void showLoading()  {
+        layoutError.setVisibility(View.GONE);
         if (swipeRefresh != null && swipeRefresh.isRefreshing()) {
-            layoutError.setVisibility(View.GONE);
             return;
         }
-        progressBar.setVisibility(View.VISIBLE);
         rvMeals.setVisibility(View.GONE);
-        layoutError.setVisibility(View.GONE);
+        showSkeleton();
     }
     private void hideLoading()  {
-        progressBar.setVisibility(View.GONE);
+        hideSkeleton();
         if (swipeRefresh != null) swipeRefresh.setRefreshing(false);
     }
     private void showContent()  {
+        hideSkeleton();
         rvMeals.setVisibility(View.VISIBLE);
         layoutError.setVisibility(View.GONE);
     }
     private void showError()    {
-        progressBar.setVisibility(View.GONE);
+        hideSkeleton();
         rvMeals.setVisibility(View.GONE);
         layoutError.setVisibility(View.VISIBLE);
         if (swipeRefresh != null) swipeRefresh.setRefreshing(false);
+    }
+
+    private void showSkeleton() {
+        if (skeleton == null) return;
+        skeleton.setVisibility(View.VISIBLE);
+        shimmerAnim = ViewUtils.startShimmer(skeleton);
+    }
+    private void hideSkeleton() {
+        ViewUtils.stopShimmer(shimmerAnim, skeleton);
+        shimmerAnim = null;
+        if (skeleton != null) skeleton.setVisibility(View.GONE);
     }
 }

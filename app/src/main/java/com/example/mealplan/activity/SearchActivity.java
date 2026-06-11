@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.animation.ObjectAnimator;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -27,6 +28,7 @@ import com.example.mealplan.model.Meal;
 import com.example.mealplan.network.ApiClient;
 import com.example.mealplan.network.MealApiService;
 import com.example.mealplan.utils.ThemeUtils;
+import com.example.mealplan.utils.ViewUtils;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -46,6 +48,8 @@ public class SearchActivity extends AppCompatActivity {
     private RecyclerView rvRecent, rvResults;
     private LinearLayout layoutRecent, layoutNoResult, layoutSearchError;
     private View progressSearch;
+    private View skeletonSearch;
+    private ObjectAnimator shimmerAnim;
     private TextView tvNoResultQuery;
     private String lastQuery = "";
 
@@ -67,7 +71,6 @@ public class SearchActivity extends AppCompatActivity {
         initViews();
         loadRecentSearches();
 
-        // Auto buka keyboard
         etSearch.requestFocus();
         InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
         imm.showSoftInput(etSearch, InputMethodManager.SHOW_IMPLICIT);
@@ -82,6 +85,7 @@ public class SearchActivity extends AppCompatActivity {
         layoutRecent   = findViewById(R.id.layout_recent);
         layoutNoResult = findViewById(R.id.layout_no_result);
         progressSearch = findViewById(R.id.progress_search);
+        skeletonSearch = findViewById(R.id.skeleton_search);
         tvNoResultQuery = findViewById(R.id.tv_no_result_query);
         layoutSearchError = findViewById(R.id.layout_search_error);
         findViewById(R.id.btn_search_retry).setOnClickListener(v -> {
@@ -212,24 +216,27 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void showRecentState() {
+        hideSkeletonSearch();
         layoutRecent.setVisibility(View.VISIBLE);
         progressSearch.setVisibility(View.GONE);
         rvResults.setVisibility(View.GONE);
         layoutNoResult.setVisibility(View.GONE);
+        layoutSearchError.setVisibility(View.GONE);
         recentAdapter.setQueries(new ArrayList<>(recentQueries));
         checkRecentEmpty();
-        layoutSearchError.setVisibility(View.GONE);
     }
 
     private void showLoadingState() {
         layoutRecent.setVisibility(View.GONE);
-        progressSearch.setVisibility(View.VISIBLE);
+        progressSearch.setVisibility(View.GONE);
         rvResults.setVisibility(View.GONE);
         layoutNoResult.setVisibility(View.GONE);
         layoutSearchError.setVisibility(View.GONE);
+        showSkeletonSearch();
     }
 
     private void showResultState() {
+        hideSkeletonSearch();
         layoutRecent.setVisibility(View.GONE);
         progressSearch.setVisibility(View.GONE);
         rvResults.setVisibility(View.VISIBLE);
@@ -238,19 +245,33 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void showNoResultState(String query) {
+        hideSkeletonSearch();
         layoutRecent.setVisibility(View.GONE);
         progressSearch.setVisibility(View.GONE);
         rvResults.setVisibility(View.GONE);
+        layoutSearchError.setVisibility(View.GONE);
         layoutNoResult.setVisibility(View.VISIBLE);
         tvNoResultQuery.setText("Tidak ada hasil untuk \"" + query + "\"");
-        layoutSearchError.setVisibility(View.GONE);
     }
 
     private void showErrorState() {
+        hideSkeletonSearch();
         layoutRecent.setVisibility(View.GONE);
         progressSearch.setVisibility(View.GONE);
         rvResults.setVisibility(View.GONE);
         layoutNoResult.setVisibility(View.GONE);
         layoutSearchError.setVisibility(View.VISIBLE);
+    }
+
+    private void showSkeletonSearch() {
+        if (skeletonSearch == null) return;
+        skeletonSearch.setVisibility(View.VISIBLE);
+        shimmerAnim = ViewUtils.startShimmer(skeletonSearch);
+    }
+
+    private void hideSkeletonSearch() {
+        ViewUtils.stopShimmer(shimmerAnim, skeletonSearch);
+        shimmerAnim = null;
+        if (skeletonSearch != null) skeletonSearch.setVisibility(View.GONE);
     }
 }
