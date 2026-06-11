@@ -39,11 +39,12 @@ public class HomeFragment extends Fragment {
     private ProgressBar progressBar;
     private View layoutError;
     private Button btnRetry;
+    private androidx.swiperefreshlayout.widget.SwipeRefreshLayout swipeRefresh;
 
     private MealAdapter mealAdapter;
     private CategoryAdapter categoryAdapter;
     private MealApiService apiService;
-    private String currentCategory = null; // null = semua/default
+    private String currentCategory = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -58,15 +59,12 @@ public class HomeFragment extends Fragment {
         setupAdapters();
         loadCategories();
 
-        // Search bar → buka SearchActivity
         view.findViewById(R.id.tv_search_hint).setOnClickListener(v ->
                 startActivity(new Intent(requireContext(), SearchActivity.class)));
 
-        // Theme toggle
         view.findViewById(R.id.btn_theme_toggle).setOnClickListener(v ->
                 ThemeUtils.toggleTheme(requireContext()));
 
-        // Random meal
         view.findViewById(R.id.btn_random).setOnClickListener(v -> loadRandomMeal());
     }
 
@@ -76,6 +74,9 @@ public class HomeFragment extends Fragment {
         progressBar  = view.findViewById(R.id.progress_bar);
         layoutError  = view.findViewById(R.id.layout_error);
         btnRetry     = view.findViewById(R.id.btn_retry);
+        swipeRefresh = view.findViewById(R.id.swipe_refresh);
+        swipeRefresh.setColorSchemeResources(R.color.primary_color);
+        swipeRefresh.setOnRefreshListener(this::refreshHome);
         apiService   = ApiClient.getService();
     }
 
@@ -84,10 +85,8 @@ public class HomeFragment extends Fragment {
         rvMeals.setLayoutManager(new GridLayoutManager(requireContext(), 2));
         rvMeals.setAdapter(mealAdapter);
 
-        // CategoryAdapter dengan support "Semua" chip + unfilter
         categoryAdapter = new CategoryAdapter(requireContext(), categoryName -> {
             if (categoryName == null) {
-                // "Semua" dipilih → load random/default
                 currentCategory = null;
                 loadDefaultMeals();
             } else {
@@ -114,10 +113,8 @@ public class HomeFragment extends Fragment {
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     List<Category> cats = parseCategories(response.body());
-                    // Tambah "Semua" di posisi pertama
                     cats.add(0, new Category(null, null, null));
                     categoryAdapter.setCategories(cats);
-                    // Default load dengan kategori pertama yang nyata
                     if (cats.size() > 1) {
                         currentCategory = cats.get(1).getName();
                         loadMealsByCategory(currentCategory);
@@ -149,8 +146,22 @@ public class HomeFragment extends Fragment {
     }
 
     private void loadDefaultMeals() {
-        // Load kategori "Chicken" sebagai default saat "Semua" dipilih
         loadMealsByCategory("Chicken");
+    }
+
+    private void refreshHome() {
+        if (!NetworkUtils.isConnected(requireContext())) {
+            swipeRefresh.setRefreshing(false);
+            showError();
+            return;
+        }
+        if (categoryAdapter.getItemCount() == 0) {
+            loadCategories();
+        } else if (currentCategory != null) {
+            loadMealsByCategory(currentCategory);
+        } else {
+            loadDefaultMeals();
+        }
     }
 
     private void loadRandomMeal() {
@@ -187,7 +198,6 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    // --- Parsers ---
     private List<Category> parseCategories(JsonObject json) {
         List<Category> list = new ArrayList<>();
         try {
@@ -221,13 +231,19 @@ public class HomeFragment extends Fragment {
         return list;
     }
 
-    // --- State helpers ---
     private void showLoading()  {
+        if (swipeRefresh != null && swipeRefresh.isRefreshing()) {
+            layoutError.setVisibility(View.GONE);
+            return;
+        }
         progressBar.setVisibility(View.VISIBLE);
         rvMeals.setVisibility(View.GONE);
         layoutError.setVisibility(View.GONE);
     }
-    private void hideLoading()  { progressBar.setVisibility(View.GONE); }
+    private void hideLoading()  {
+        progressBar.setVisibility(View.GONE);
+        if (swipeRefresh != null) swipeRefresh.setRefreshing(false);
+    }
     private void showContent()  {
         rvMeals.setVisibility(View.VISIBLE);
         layoutError.setVisibility(View.GONE);
@@ -236,5 +252,6 @@ public class HomeFragment extends Fragment {
         progressBar.setVisibility(View.GONE);
         rvMeals.setVisibility(View.GONE);
         layoutError.setVisibility(View.VISIBLE);
+        if (swipeRefresh != null) swipeRefresh.setRefreshing(false);
     }
 }

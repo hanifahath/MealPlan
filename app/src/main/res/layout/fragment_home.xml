@@ -7,7 +7,6 @@
     android:orientation="vertical"
     android:background="?android:attr/colorBackground">
 
-    <!-- Top bar -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -24,7 +23,6 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
-            <!-- Greeting: caption kecil -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -33,7 +31,6 @@
                 android:textColor="#9E9E9E"
                 android:fontFamily="sans-serif"/>
 
-            <!-- App name: bold besar, jelas dominan -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -64,7 +61,6 @@
             android:contentDescription="@string/toggle_theme"/>
     </LinearLayout>
 
-    <!-- Search bar full width, ikon lebih besar -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="48dp"
@@ -95,7 +91,6 @@
             android:textColor="#BDBDBD"/>
     </LinearLayout>
 
-    <!-- Kategori chips -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_categories"
         android:layout_width="match_parent"
@@ -106,21 +101,26 @@
         android:clipToPadding="false"
         android:orientation="horizontal"/>
 
-    <!-- Content -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_meals"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_refresh"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            android:paddingTop="4dp"
-            android:paddingBottom="8dp"
-            android:clipToPadding="false"/>
+            android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_meals"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="8dp"
+                android:clipToPadding="false"/>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         <ProgressBar
             android:id="@+id/progress_bar"
