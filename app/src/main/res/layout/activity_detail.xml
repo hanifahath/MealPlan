@@ -165,4 +165,32 @@
         android:layout_height="0dp"
         android:layout_weight="1"/>
 
+    <LinearLayout
+        android:id="@+id/layout_detail_error"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="32dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/detail_load_failed"
+            android:textSize="15sp"
+            android:gravity="center"
+            android:textColor="?attr/colorOnBackground"/>
+
+        <Button
+            android:id="@+id/btn_detail_retry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/detail_retry"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="@color/primary_color"/>
+    </LinearLayout>
+
 </LinearLayout>

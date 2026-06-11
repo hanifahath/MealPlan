@@ -32,4 +32,7 @@
     <string name="all_recipes">Semua</string>
     <string name="no_planner">Planner kosong</string>
     <string name="recipe_lang_note">📄 Resep asli (Bahasa Inggris)</string>
+    <string name="detail_load_failed">Gagal memuat detail resep.\nPeriksa koneksi internet Anda.</string>
+    <string name="detail_retry">Coba Lagi</string>
+    <string name="search_load_failed">Gagal memuat hasil pencarian.\nPeriksa koneksi internet Anda.</string>
 </resources>

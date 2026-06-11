@@ -44,9 +44,10 @@ public class SearchActivity extends AppCompatActivity {
     private EditText etSearch;
     private ImageButton btnBack, btnClear;
     private RecyclerView rvRecent, rvResults;
-    private LinearLayout layoutRecent, layoutNoResult;
+    private LinearLayout layoutRecent, layoutNoResult, layoutSearchError;
     private View progressSearch;
     private TextView tvNoResultQuery;
+    private String lastQuery = "";
 
     private MealAdapter mealAdapter;
     private RecentSearchAdapter recentAdapter;
@@ -82,8 +83,11 @@ public class SearchActivity extends AppCompatActivity {
         layoutNoResult = findViewById(R.id.layout_no_result);
         progressSearch = findViewById(R.id.progress_search);
         tvNoResultQuery = findViewById(R.id.tv_no_result_query);
+        layoutSearchError = findViewById(R.id.layout_search_error);
+        findViewById(R.id.btn_search_retry).setOnClickListener(v -> {
+            if (!lastQuery.isEmpty()) performSearch(lastQuery);
+        });
 
-        // Adapters
         mealAdapter = new MealAdapter(this);
         rvResults.setLayoutManager(new GridLayoutManager(this, 2));
         rvResults.setAdapter(mealAdapter);
@@ -135,6 +139,7 @@ public class SearchActivity extends AppCompatActivity {
 
     private void performSearch(String query) {
         if (query.isEmpty()) return;
+        lastQuery = query;
         showLoadingState();
         apiService.searchMeals(query).enqueue(new Callback<JsonObject>() {
             @Override
@@ -148,10 +153,10 @@ public class SearchActivity extends AppCompatActivity {
                         mealAdapter.setMeals(meals);
                         showResultState();
                     }
-                } else { showNoResultState(query); }
+                } else { showErrorState(); }
             }
             @Override public void onFailure(Call<JsonObject> call, Throwable t) {
-                showNoResultState(query);
+                showErrorState();
             }
         });
     }
@@ -213,6 +218,7 @@ public class SearchActivity extends AppCompatActivity {
         layoutNoResult.setVisibility(View.GONE);
         recentAdapter.setQueries(new ArrayList<>(recentQueries));
         checkRecentEmpty();
+        layoutSearchError.setVisibility(View.GONE);
     }
 
     private void showLoadingState() {
@@ -220,6 +226,7 @@ public class SearchActivity extends AppCompatActivity {
         progressSearch.setVisibility(View.VISIBLE);
         rvResults.setVisibility(View.GONE);
         layoutNoResult.setVisibility(View.GONE);
+        layoutSearchError.setVisibility(View.GONE);
     }
 
     private void showResultState() {
@@ -227,6 +234,7 @@ public class SearchActivity extends AppCompatActivity {
         progressSearch.setVisibility(View.GONE);
         rvResults.setVisibility(View.VISIBLE);
         layoutNoResult.setVisibility(View.GONE);
+        layoutSearchError.setVisibility(View.GONE);
     }
 
     private void showNoResultState(String query) {
@@ -235,5 +243,14 @@ public class SearchActivity extends AppCompatActivity {
         rvResults.setVisibility(View.GONE);
         layoutNoResult.setVisibility(View.VISIBLE);
         tvNoResultQuery.setText("Tidak ada hasil untuk \"" + query + "\"");
+        layoutSearchError.setVisibility(View.GONE);
+    }
+
+    private void showErrorState() {
+        layoutRecent.setVisibility(View.GONE);
+        progressSearch.setVisibility(View.GONE);
+        rvResults.setVisibility(View.GONE);
+        layoutNoResult.setVisibility(View.GONE);
+        layoutSearchError.setVisibility(View.VISIBLE);
     }
 }

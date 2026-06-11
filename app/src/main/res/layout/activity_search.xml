@@ -175,5 +175,41 @@
                 android:textSize="13sp"
                 android:textColor="#9E9E9E"/>
         </LinearLayout>
+
+        <!-- State gagal jaringan + tombol coba lagi -->
+        <LinearLayout
+            android:id="@+id/layout_search_error"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="32dp"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:src="@drawable/ic_search"
+                app:tint="@color/primary_light"
+                android:contentDescription="@null"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/search_load_failed"
+                android:textSize="15sp"
+                android:gravity="center"
+                android:textColor="?attr/colorOnBackground"/>
+
+            <Button
+                android:id="@+id/btn_search_retry"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/detail_retry"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="@color/primary_color"/>
+        </LinearLayout>
     </FrameLayout>
 </LinearLayout>

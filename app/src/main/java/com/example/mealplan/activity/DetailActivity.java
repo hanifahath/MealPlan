@@ -42,6 +42,8 @@ public class DetailActivity extends AppCompatActivity {
     private ImageButton btnBack, btnFavorite, btnShare;
     private Button btnYoutube;
     private View progressDetail;
+    private View layoutDetailError;
+    private Button btnDetailRetry;
     private TabLayout tabLayout;
     private ViewPager2 viewPager;
 
@@ -101,6 +103,8 @@ public class DetailActivity extends AppCompatActivity {
         progressDetail = findViewById(R.id.progress_detail);
         tabLayout      = findViewById(R.id.tab_layout);
         viewPager      = findViewById(R.id.view_pager);
+        layoutDetailError = findViewById(R.id.layout_detail_error);
+        btnDetailRetry    = findViewById(R.id.btn_detail_retry);
 
         tvName.setText(mealName);
         tvCategory.setText(com.example.mealplan.utils.LocaleMapper.category(mealCategory));
@@ -113,6 +117,7 @@ public class DetailActivity extends AppCompatActivity {
         btnBack.setOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
         btnFavorite.setOnClickListener(v -> toggleFavorite());
         btnShare.setOnClickListener(v -> shareRecipe());
+        btnDetailRetry.setOnClickListener(v -> loadDetail());
 
         final int baseMargin = (int) (14 * getResources().getDisplayMetrics().density);
         androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(btnBack, (v, insets) -> {
@@ -227,6 +232,9 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void loadDetail() {
+        layoutDetailError.setVisibility(View.GONE);
+        tabLayout.setVisibility(View.VISIBLE);
+        viewPager.setVisibility(View.VISIBLE);
         progressDetail.setVisibility(View.VISIBLE);
         apiService.getMealDetail(mealId).enqueue(new Callback<JsonObject>() {
             @Override
@@ -295,10 +303,12 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void showDetailError() {
-        Toast.makeText(this, "Gagal memuat detail. Cek koneksi.", Toast.LENGTH_SHORT).show();
+        progressDetail.setVisibility(View.GONE);
+        tabLayout.setVisibility(View.GONE);
+        viewPager.setVisibility(View.GONE);
+        layoutDetailError.setVisibility(View.VISIBLE);
     }
 
-    // --- Inner Fragment classes untuk Tab ---
 
     public static class IngredientsTabFragment extends Fragment {
         private com.example.mealplan.adapter.IngredientAdapter adapter;
