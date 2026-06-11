@@ -42,8 +42,8 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Meal meal = meals.get(position);
         holder.tvName.setText(meal.getName());
+        holder.tvCategory.setText(com.example.mealplan.utils.LocaleMapper.category(meal.getCategory()));
 
-        // Tampilkan tag kategori kalau ada
         if (meal.getCategory() != null && !meal.getCategory().isEmpty()) {
             holder.tvCategory.setVisibility(View.VISIBLE);
             holder.tvCategory.setText(meal.getCategory());

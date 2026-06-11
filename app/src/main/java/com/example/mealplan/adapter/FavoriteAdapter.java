@@ -66,6 +66,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
 
         holder.tvName.setText(meal.getMealName());
         holder.tvCategory.setText(meal.getMealCategory());
+        holder.tvCategory.setText(com.example.mealplan.utils.LocaleMapper.category(meal.getMealCategory()));
 
         Glide.with(context)
                 .load(meal.getMealThumb())

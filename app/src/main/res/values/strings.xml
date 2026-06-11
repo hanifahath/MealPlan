@@ -31,4 +31,5 @@
     <string name="no_grocery">Belanja kosong</string>
     <string name="all_recipes">Semua</string>
     <string name="no_planner">Planner kosong</string>
+    <string name="recipe_lang_note">📄 Resep asli (Bahasa Inggris)</string>
 </resources>

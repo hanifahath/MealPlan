@@ -45,8 +45,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Category cat = categories.get(position);
-        // Index 0 adalah "Semua" (name=null)
-        String displayName = (cat.getName() == null) ? "Semua" : cat.getName();
+        String displayName = (cat.getName() == null) ? "Semua" : com.example.mealplan.utils.LocaleMapper.category(cat.getName());
         holder.tvCategory.setText(displayName);
 
         if (position == selectedPosition) {

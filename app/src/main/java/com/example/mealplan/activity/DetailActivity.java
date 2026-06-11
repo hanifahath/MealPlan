@@ -103,7 +103,7 @@ public class DetailActivity extends AppCompatActivity {
         viewPager      = findViewById(R.id.view_pager);
 
         tvName.setText(mealName);
-        tvCategory.setText(mealCategory);
+        tvCategory.setText(com.example.mealplan.utils.LocaleMapper.category(mealCategory));
         btnYoutube.setVisibility(View.GONE);
 
         if (!mealThumb.isEmpty()) {
@@ -192,9 +192,9 @@ public class DetailActivity extends AppCompatActivity {
 
         if (currentDetail != null) {
             if (currentDetail.getCategory() != null)
-                sb.append("Kategori: ").append(currentDetail.getCategory());
+                sb.append("Kategori: ").append(com.example.mealplan.utils.LocaleMapper.category(currentDetail.getCategory()));
             if (currentDetail.getArea() != null && !currentDetail.getArea().isEmpty())
-                sb.append(" | ").append(currentDetail.getArea());
+                sb.append(" | ").append(com.example.mealplan.utils.LocaleMapper.area(currentDetail.getArea()));
             sb.append("\n\n");
 
             sb.append("Bahan-bahan:\n");
@@ -256,8 +256,8 @@ public class DetailActivity extends AppCompatActivity {
 
     private void bindDetail(MealDetail detail) {
         tvName.setText(detail.getName() != null ? detail.getName() : mealName);
-        tvCategory.setText(detail.getCategory() != null ? detail.getCategory() : mealCategory);
-        tvArea.setText(detail.getArea() != null ? detail.getArea() : "");
+        tvCategory.setText(com.example.mealplan.utils.LocaleMapper.category(detail.getCategory() != null ? detail.getCategory() : mealCategory));
+        tvArea.setText(com.example.mealplan.utils.LocaleMapper.area(detail.getArea() != null ? detail.getArea() : ""));
 
         if (detail.getThumb() != null && !detail.getThumb().isEmpty()) {
             Glide.with(this).load(detail.getThumb()).centerCrop().into(imgThumb);
