@@ -2,6 +2,8 @@ package com.example.mealplan.adapter;
 
 import android.content.Context;
 import android.graphics.Paint;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,8 +22,11 @@ public class GroceryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     private final Context context;
     private List<GroceryItem> displayList = new ArrayList<>();
-    // Raw items tanpa header — untuk rebuild list
     private List<GroceryItem> rawItems = new ArrayList<>();
+
+    private final Handler handler = new Handler(Looper.getMainLooper());
+    private Runnable pendingRebuild;
+    private static final long CHECK_REBUILD_DELAY_MS = 1200;
 
     private OnProgressChangedListener progressListener;
 
@@ -42,11 +47,13 @@ public class GroceryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         rebuildDisplayList();
     }
 
-    // Rebuild: kelompokkan per sourceMeal, checked items di bawah
     private void rebuildDisplayList() {
+        if (pendingRebuild != null) {
+            handler.removeCallbacks(pendingRebuild);
+            pendingRebuild = null;
+        }
         displayList.clear();
 
-        // Pisahkan unchecked dan checked
         Map<String, List<GroceryItem>> uncheckedBySrc = new LinkedHashMap<>();
         List<GroceryItem> checkedItems = new ArrayList<>();
 
@@ -59,13 +66,11 @@ public class GroceryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             }
         }
 
-        // Tambah unchecked dengan header per resep
         for (Map.Entry<String, List<GroceryItem>> entry : uncheckedBySrc.entrySet()) {
             displayList.add(new GroceryItem(entry.getKey(), GroceryItem.TYPE_HEADER));
             displayList.addAll(entry.getValue());
         }
 
-        // Tambah checked section kalau ada
         if (!checkedItems.isEmpty()) {
             displayList.add(new GroceryItem(
                     "Sudah dibeli (" + checkedItems.size() + ")",
@@ -85,6 +90,12 @@ public class GroceryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             if (item.isChecked()) checked++;
         }
         progressListener.onProgressChanged(checked, total);
+    }
+
+    private void scheduleRebuild() {
+        if (pendingRebuild != null) handler.removeCallbacks(pendingRebuild);
+        pendingRebuild = this::rebuildDisplayList;
+        handler.postDelayed(pendingRebuild, CHECK_REBUILD_DELAY_MS);
     }
 
     public void clearChecked() {
@@ -153,13 +164,12 @@ public class GroceryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             h.cbGrocery.setOnCheckedChangeListener((btn, isChecked) -> {
                 item.setChecked(isChecked);
-                rebuildDisplayList();
+                applyCheckedStyle(h, isChecked);
+                notifyProgress();
+                scheduleRebuild();
             });
 
-            h.itemView.setOnClickListener(v -> {
-                item.setChecked(!item.isChecked());
-                rebuildDisplayList();
-            });
+            h.itemView.setOnClickListener(v -> h.cbGrocery.toggle());
         }
     }
 
