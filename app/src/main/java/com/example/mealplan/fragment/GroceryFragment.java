@@ -147,14 +147,6 @@ public class GroceryFragment extends Fragment {
         return list;
     }
 
-    private void updateProgress(int checked, int total) {
-        if (progressGrocery == null || total == 0) return;
-        int pct = (int)((checked / (float) total) * 100);
-        progressGrocery.setProgress(pct);
-        if (tvInfo != null)
-            tvInfo.setText(checked + " dari " + total + " sudah dibeli");
-    }
-
     private void shareGroceryList() {
         String text = adapter.toShareText();
         if (text.trim().isEmpty()) return;
