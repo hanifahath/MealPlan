@@ -5,19 +5,20 @@
     android:viewportWidth="120"
     android:viewportHeight="120">
 
-    <!-- Lingkaran background -->
     <path
         android:fillColor="#E65100"
         android:pathData="M60,10 C32.4,10 10,32.4 10,60 C10,87.6 32.4,110 60,110 C87.6,110 110,87.6 110,60 C110,32.4 87.6,10 60,10 Z"/>
 
-    <!-- Fork kiri -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M42,30 L42,52 Q42,56 46,56 L46,90 Q46,92 48,92 L50,92 Q52,92 52,90 L52,56 Q56,56 56,52 L56,30 Q56,28 54,28 L54,44 L52,44 L52,28 L50,28 L50,44 L48,44 L48,28 L46,28 Q44,28 44,30 Z"/>
+        android:pathData="M44,30 L47,30 L47,45 L48.5,45 L48.5,30 L51.5,30 L51.5,45 L53,45 L53,30 L56,30 L56,47 Q56,50 52.5,50.5 L52.5,88 Q52.5,90 50,90 Q47.5,90 47.5,88 L47.5,50.5 Q44,50 44,47 Z"/>
 
-    <!-- Spatula / sendok kanan -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M68,28 Q64,28 64,36 L64,50 Q64,56 68,57 L68,90 Q68,92 70,92 L72,92 Q74,92 74,90 L74,57 Q78,56 78,50 L78,36 Q78,28 74,28 Z"/>
+        android:pathData="M70,30 C73.31,30 76,34.92 76,41 C76,47.08 73.31,52 70,52 C66.69,52 64,47.08 64,41 C64,34.92 66.69,30 70,30 Z"/>
+
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M67.5,47 L72.5,47 L72.5,88 Q72.5,90 70,90 Q67.5,90 67.5,88 Z"/>
 
 </vector>

@@ -38,17 +38,36 @@
                 android:textAppearance="@style/Text.Display"/>
         </LinearLayout>
 
-        <ImageButton
+        <LinearLayout
             android:id="@+id/btn_random"
-            android:layout_width="36dp"
+            android:layout_width="wrap_content"
             android:layout_height="36dp"
-            android:padding="9dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_random"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:paddingStart="11dp"
+            android:paddingEnd="13dp"
             android:background="@drawable/bg_hdr_btn"
-            app:tint="@color/text_secondary"
-            android:contentDescription="@string/random_recipe"
-            android:layout_marginEnd="7dp"/>
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginEnd="7dp"
+            android:contentDescription="@string/random_recipe">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/ic_random"
+                app:tint="@color/text_secondary"
+                android:contentDescription="@null"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:text="@string/random_recipe"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_secondary"/>
+        </LinearLayout>
 
         <ImageButton
             android:id="@+id/btn_theme_toggle"
