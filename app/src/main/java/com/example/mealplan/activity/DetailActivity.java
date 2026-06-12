@@ -104,7 +104,7 @@ public class DetailActivity extends AppCompatActivity {
         viewPager      = findViewById(R.id.view_pager);
         layoutDetailError = findViewById(R.id.layout_detail_error);
         btnDetailRetry    = findViewById(R.id.btn_detail_retry);
-        
+
         tvName.setText(mealName);
         tvCategory.setText(com.example.mealplan.utils.LocaleMapper.category(mealCategory));
         btnYoutube.setVisibility(View.GONE);

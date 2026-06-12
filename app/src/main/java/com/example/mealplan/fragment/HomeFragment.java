@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,7 +31,9 @@ import com.example.mealplan.utils.Constants;
 import com.example.mealplan.utils.ThemeUtils;
 import com.example.mealplan.utils.ViewUtils;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Random;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -41,6 +44,9 @@ public class HomeFragment extends Fragment {
     private ProgressBar progressBar;
     private View layoutError;
     private Button btnRetry;
+    private TextView tvGreeting;
+    private ImageView imgErrorIcon;
+    private TextView tvErrorTitle, tvErrorSubtitle;
     private androidx.swiperefreshlayout.widget.SwipeRefreshLayout swipeRefresh;
     private View skeleton;
     private ObjectAnimator shimmerAnim;
@@ -49,6 +55,8 @@ public class HomeFragment extends Fragment {
     private CategoryAdapter categoryAdapter;
     private MealApiService apiService;
     private String currentCategory = null;
+    private final List<String> realCategories = new ArrayList<>();
+    private final Random random = new Random();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -77,12 +85,33 @@ public class HomeFragment extends Fragment {
         rvCategories = view.findViewById(R.id.rv_categories);
         progressBar  = view.findViewById(R.id.progress_bar);
         layoutError  = view.findViewById(R.id.layout_error);
-        btnRetry     = view.findViewById(R.id.btn_retry);
+        btnRetry        = view.findViewById(R.id.btn_retry);
+        tvGreeting      = view.findViewById(R.id.tv_greeting);
+        imgErrorIcon    = view.findViewById(R.id.img_error_icon);
+        tvErrorTitle    = view.findViewById(R.id.tv_error_title);
+        tvErrorSubtitle = view.findViewById(R.id.tv_error_subtitle);
+        updateGreeting();
         swipeRefresh = view.findViewById(R.id.swipe_refresh);
         swipeRefresh.setColorSchemeResources(R.color.primary_color);
         swipeRefresh.setOnRefreshListener(this::refreshHome);
         skeleton     = view.findViewById(R.id.skeleton);
         apiService   = ApiClient.getService();
+    }
+
+    private void updateGreeting() {
+        if (tvGreeting == null) return;
+        int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+        String greeting;
+        if (hour >= 5 && hour < 11) {
+            greeting = "Selamat pagi 🌅";
+        } else if (hour >= 11 && hour < 15) {
+            greeting = "Selamat siang ☀️";
+        } else if (hour >= 15 && hour < 19) {
+            greeting = "Selamat sore 🌇";
+        } else {
+            greeting = "Selamat malam 🌙";
+        }
+        tvGreeting.setText(greeting);
     }
 
     private void setupAdapters() {
@@ -118,6 +147,10 @@ public class HomeFragment extends Fragment {
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     List<Category> cats = parseCategories(response.body());
+                    realCategories.clear();
+                    for (Category c : cats) {
+                        if (c.getName() != null) realCategories.add(c.getName());
+                    }
                     cats.add(0, new Category(null, null, null));
                     categoryAdapter.setCategories(cats);
                     if (cats.size() > 1) {
@@ -139,8 +172,13 @@ public class HomeFragment extends Fragment {
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                 hideLoading();
                 if (response.isSuccessful() && response.body() != null) {
-                    mealAdapter.setMeals(parseMeals(response.body(), category));
-                    showContent();
+                    List<Meal> meals = parseMeals(response.body(), category);
+                    if (meals.isEmpty()) {
+                        showEmpty();
+                    } else {
+                        mealAdapter.setMeals(meals);
+                        showContent();
+                    }
                 } else showError();
             }
             @Override
@@ -151,7 +189,13 @@ public class HomeFragment extends Fragment {
     }
 
     private void loadDefaultMeals() {
-        loadMealsByCategory("Chicken");
+        String category;
+        if (!realCategories.isEmpty()) {
+            category = realCategories.get(random.nextInt(realCategories.size()));
+        } else {
+            category = "Chicken";
+        }
+        loadMealsByCategory(category);
     }
 
     private void refreshHome() {
@@ -256,6 +300,21 @@ public class HomeFragment extends Fragment {
     private void showError()    {
         hideSkeleton();
         rvMeals.setVisibility(View.GONE);
+        imgErrorIcon.setImageResource(R.drawable.ic_no_internet);
+        tvErrorTitle.setText("Tidak ada koneksi");
+        tvErrorSubtitle.setText("Periksa koneksi internet kamu");
+        btnRetry.setVisibility(View.VISIBLE);
+        layoutError.setVisibility(View.VISIBLE);
+        if (swipeRefresh != null) swipeRefresh.setRefreshing(false);
+    }
+
+    private void showEmpty() {
+        hideSkeleton();
+        rvMeals.setVisibility(View.GONE);
+        imgErrorIcon.setImageResource(R.drawable.ic_search);
+        tvErrorTitle.setText("Belum ada resep di sini");
+        tvErrorSubtitle.setText("Coba kategori lain atau cari resep favoritmu");
+        btnRetry.setVisibility(View.GONE);
         layoutError.setVisibility(View.VISIBLE);
         if (swipeRefresh != null) swipeRefresh.setRefreshing(false);
     }
