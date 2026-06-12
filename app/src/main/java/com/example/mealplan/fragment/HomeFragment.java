@@ -144,7 +144,8 @@ public class HomeFragment extends Fragment {
         rvCategories.setAdapter(categoryAdapter);
 
         btnRetry.setOnClickListener(v -> {
-            if (currentCategory != null) loadMealsByCategory(currentCategory);
+            if (categoryAdapter.getItemCount() == 0) loadCategories();
+            else if (currentCategory != null) loadMealsByCategory(currentCategory);
             else loadDefaultMeals();
         });
     }
@@ -163,12 +164,16 @@ public class HomeFragment extends Fragment {
                     }
                     cats.add(0, new Category(null, null, null));
                     categoryAdapter.setCategories(cats);
-                    currentCategory = null;
-                    loadDefaultMeals();
                     if (cats.size() > 1) {
                         currentCategory = cats.get(1).getName();
+                        categoryAdapter.setSelectedPosition(1);
                         loadMealsByCategory(currentCategory);
+                    } else {
+                        currentCategory = null;
+                        loadDefaultMeals();
                     }
+                } else {
+                    showError();
                 }
             }
             @Override

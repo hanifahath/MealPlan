@@ -34,6 +34,14 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
         notifyDataSetChanged();
     }
 
+    public void setSelectedPosition(int position) {
+        if (position < 0 || position >= categories.size()) return;
+        int prev = selectedPosition;
+        selectedPosition = position;
+        notifyItemChanged(prev);
+        notifyItemChanged(selectedPosition);
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -62,7 +70,6 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
             selectedPosition = holder.getAdapterPosition();
             notifyItemChanged(prev);
             notifyItemChanged(selectedPosition);
-            // Kirim null kalau "Semua"
             listener.onCategoryClick(cat.getName());
         });
     }
