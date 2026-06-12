@@ -23,18 +23,8 @@
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:navigationBarColor">@color/bnav_bg</item>
 
-        <!-- ========================================================
-             TYPOGRAPHY — Plus Jakarta Sans
-             The .ttf could not be bundled offline. To enable it:
-             1. In Android Studio: right-click res > New > Font >
-                "Downloadable Fonts", search "Plus Jakarta Sans".
-                (This auto-creates res/font/plus_jakarta_sans.xml and
-                 the GMS font certs — no manual cert files needed.)
-             2. Replace the two values below with
-                @font/plus_jakarta_sans
-             ======================================================== -->
         <item name="fontFamily">@font/plus_jakarta_sans</item>
-        <item name="android:fontFamily">plus_jakarta_sans</item>
+        <item name="android:fontFamily">@font/plus_jakarta_sans</item>
     </style>
 
     <!-- Splash -->

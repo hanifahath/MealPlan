@@ -24,8 +24,8 @@
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:navigationBarColor">@color/bnav_bg</item>
 
-        <item name="fontFamily">sans-serif</item>
-        <item name="android:fontFamily">sans-serif</item>
+        <item name="fontFamily">@font/plus_jakarta_sans</item>
+        <item name="android:fontFamily">@font/plus_jakarta_sans</item>
     </style>
 
     <style name="Theme.MealPlan.Splash" parent="Theme.MealPlan">
