@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item>
-        <shape android:shape="rectangle">
-            <solid android:color="@color/primary_color"/>
-            <corners android:radius="7dp"/>
-            <size android:width="22dp" android:height="22dp"/>
-        </shape>
-    </item>
-    <item
-        android:drawable="@drawable/ic_check_white"
-        android:width="14dp"
-        android:height="14dp"
-        android:gravity="center"/>
-</layer-list>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="22dp"
+    android:height="22dp"
+    android:viewportWidth="22"
+    android:viewportHeight="22">
+    <path
+        android:fillColor="@color/primary_color"
+        android:pathData="M7,0 L15,0 C18.866,0 22,3.134 22,7 L22,15 C22,18.866 18.866,22 15,22 L7,22 C3.134,22 0,18.866 0,15 L0,7 C0,3.134 3.134,0 7,0 Z"/>
+    <path
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="2.4"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M5.8,11.6 L9.3,15.2 L16.4,7.4"/>
+</vector>
