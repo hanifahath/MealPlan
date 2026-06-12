@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.snackbar.Snackbar;
@@ -48,11 +49,10 @@ public class PlannerFragment extends Fragment {
 
                     @Override
                     public void onDeleteMealClick(PlannerItem item) {
-                        // Hapus dari adapter langsung (optimistic update)
                         executor.execute(() -> {
                             plannerDao.deleteById(item.getId());
                             List<PlannerItem> updated = plannerDao.getAll();
-                            requireActivity().runOnUiThread(() -> {
+                            runOnUi(() -> {
                                 plannerAdapter.setPlannerItems(updated);
 
                                 Snackbar snackbar = Snackbar.make(
@@ -64,7 +64,7 @@ public class PlannerFragment extends Fragment {
                                     executor.execute(() -> {
                                         plannerDao.insert(item);
                                         List<PlannerItem> restored = plannerDao.getAll();
-                                        requireActivity().runOnUiThread(() ->
+                                        runOnUi(() ->
                                                 plannerAdapter.setPlannerItems(restored));
                                     });
                                 });
@@ -97,15 +97,14 @@ public class PlannerFragment extends Fragment {
     private void loadPlanner() {
         executor.execute(() -> {
             List<PlannerItem> items = plannerDao.getAll();
-            requireActivity().runOnUiThread(() ->
-                    plannerAdapter.setPlannerItems(items));
+            runOnUi(() -> plannerAdapter.setPlannerItems(items));
         });
     }
 
     private void showFavoritePicker(String day) {
         executor.execute(() -> {
             List<FavoriteMeal> favorites = favoriteDao.getAll();
-            requireActivity().runOnUiThread(() -> {
+            runOnUi(() -> {
                 if (favorites.isEmpty()) {
                     new AlertDialog.Builder(requireContext())
                             .setTitle("Belum ada favorit")
@@ -132,13 +131,21 @@ public class PlannerFragment extends Fragment {
                             executor.execute(() -> {
                                 plannerDao.insert(item);
                                 List<PlannerItem> updated = plannerDao.getAll();
-                                requireActivity().runOnUiThread(() ->
+                                runOnUi(() ->
                                         plannerAdapter.setPlannerItems(updated));
                             });
                         })
                         .setNegativeButton("Batal", null)
                         .show();
             });
+        });
+    }
+
+    private void runOnUi(Runnable action) {
+        FragmentActivity activity = getActivity();
+        if (activity == null) return;
+        activity.runOnUiThread(() -> {
+            if (isAdded()) action.run();
         });
     }
 }

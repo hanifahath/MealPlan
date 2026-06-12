@@ -144,8 +144,7 @@ public class HomeFragment extends Fragment {
         rvCategories.setAdapter(categoryAdapter);
 
         btnRetry.setOnClickListener(v -> {
-            if (categoryAdapter.getItemCount() == 0) loadCategories();
-            else if (currentCategory != null) loadMealsByCategory(currentCategory);
+            if (currentCategory != null) loadMealsByCategory(currentCategory);
             else loadDefaultMeals();
         });
     }
@@ -156,6 +155,7 @@ public class HomeFragment extends Fragment {
         apiService.getCategories().enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (!isAdded()) return;
                 if (response.isSuccessful() && response.body() != null) {
                     List<Category> cats = parseCategories(response.body());
                     realCategories.clear();
@@ -164,12 +164,12 @@ public class HomeFragment extends Fragment {
                     }
                     cats.add(0, new Category(null, null, null));
                     categoryAdapter.setCategories(cats);
+                    currentCategory = null;
                     if (cats.size() > 1) {
                         currentCategory = cats.get(1).getName();
                         categoryAdapter.setSelectedPosition(1);
                         loadMealsByCategory(currentCategory);
                     } else {
-                        currentCategory = null;
                         loadDefaultMeals();
                     }
                 } else {
@@ -177,7 +177,10 @@ public class HomeFragment extends Fragment {
                 }
             }
             @Override
-            public void onFailure(Call<JsonObject> call, Throwable t) { showError(); }
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                if (!isAdded()) return;
+                showError();
+            }
         });
     }
 
@@ -187,6 +190,7 @@ public class HomeFragment extends Fragment {
         apiService.getMealsByCategory(category).enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (!isAdded()) return;
                 hideLoading();
                 if (response.isSuccessful() && response.body() != null) {
                     List<Meal> meals = parseMeals(response.body(), category);
@@ -200,6 +204,7 @@ public class HomeFragment extends Fragment {
             }
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
+                if (!isAdded()) return;
                 hideLoading(); showError();
             }
         });
@@ -238,6 +243,7 @@ public class HomeFragment extends Fragment {
         apiService.getRandomMeal().enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (!isAdded()) return;
                 if (response.isSuccessful() && response.body() != null) {
                     try {
                         JsonArray meals = response.body().getAsJsonArray("meals");
@@ -259,6 +265,7 @@ public class HomeFragment extends Fragment {
             }
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
+                if (!isAdded()) return;
                 Toast.makeText(requireContext(), "Gagal memuat resep acak", Toast.LENGTH_SHORT).show();
             }
         });

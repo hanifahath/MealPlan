@@ -6,10 +6,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.gson.Gson;
@@ -87,7 +87,7 @@ public class GroceryFragment extends Fragment {
     }
 
     private void generateGroceryList() {
-        final android.content.Context ctx = requireContext();
+        final android.content.Context ctx = requireContext().getApplicationContext();
         executor.execute(() -> {
             List<PlannerItem> plannerItems = plannerDao.getAll();
 
@@ -122,7 +122,7 @@ public class GroceryFragment extends Fragment {
             final int manualCount = manual.size();
             final List<GroceryItem> finalItems = items;
 
-            requireActivity().runOnUiThread(() -> {
+            runOnUi(() -> {
                 if (finalItems.isEmpty()) {
                     showEmpty();
                 } else {
@@ -191,5 +191,13 @@ public class GroceryFragment extends Fragment {
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_TEXT, text);
         startActivity(Intent.createChooser(shareIntent, "Bagikan daftar belanja"));
+    }
+
+    private void runOnUi(Runnable action) {
+        FragmentActivity activity = getActivity();
+        if (activity == null) return;
+        activity.runOnUiThread(() -> {
+            if (isAdded()) action.run();
+        });
     }
 }

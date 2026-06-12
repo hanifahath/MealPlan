@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.snackbar.Snackbar;
@@ -14,7 +15,6 @@ import com.example.mealplan.R;
 import com.example.mealplan.adapter.FavoriteAdapter;
 import com.example.mealplan.database.FavoriteDao;
 import com.example.mealplan.model.FavoriteMeal;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -55,7 +55,7 @@ public class FavoritesFragment extends Fragment {
                         snackbar.setAction("Batalkan", v -> {
                             executor.execute(() -> {
                                 favoriteDao.insert(meal);
-                                requireActivity().runOnUiThread(this::reloadAfterUndo);
+                                runOnUi(this::reloadAfterUndo);
                             });
                         });
                         snackbar.addCallback(new Snackbar.Callback() {
@@ -93,7 +93,7 @@ public class FavoritesFragment extends Fragment {
         executor.execute(() -> {
             List<FavoriteMeal> list = favoriteDao.getAll();
             applySortInPlace(list);
-            requireActivity().runOnUiThread(() -> {
+            runOnUi(() -> {
                 adapter.setFavorites(list);
                 tvFavCount.setText(list.size() + " resep tersimpan");
                 checkEmpty();
@@ -132,5 +132,13 @@ public class FavoritesFragment extends Fragment {
             layoutEmpty.setVisibility(View.GONE);
             rvFavorites.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void runOnUi(Runnable action) {
+        FragmentActivity activity = getActivity();
+        if (activity == null) return;
+        activity.runOnUiThread(() -> {
+            if (isAdded()) action.run();
+        });
     }
 }
