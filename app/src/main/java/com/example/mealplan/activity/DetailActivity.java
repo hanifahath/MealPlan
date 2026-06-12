@@ -367,30 +367,49 @@ public class DetailActivity extends AppCompatActivity {
             }
         }
 
+        private java.util.List<String> parseSteps(String text) {
+            java.util.List<String> steps = new java.util.ArrayList<>();
+            if (text == null) return steps;
+            String normalized = text.replace("\r\n", "\n").replace("\r", "\n").trim();
+
+            java.util.regex.Pattern pureHeader = java.util.regex.Pattern.compile(
+                    "^\\s*step\\b\\s*\\d*\\s*[:.\\)-]?\\s*$",
+                    java.util.regex.Pattern.CASE_INSENSITIVE);
+            java.util.regex.Pattern stepPrefix = java.util.regex.Pattern.compile(
+                    "^\\s*step\\s+\\d+\\s*[:.\\)-]?\\s+",
+                    java.util.regex.Pattern.CASE_INSENSITIVE);
+            java.util.regex.Pattern numberPrefix = java.util.regex.Pattern.compile(
+                    "^\\s*\\d{1,2}\\s*[:.\\)]\\s+");
+
+            for (String raw : normalized.split("\n+")) {
+                String line = raw.trim();
+                if (line.isEmpty()) continue;
+                if (pureHeader.matcher(line).matches()) continue;
+                line = stepPrefix.matcher(line).replaceFirst("");
+                line = numberPrefix.matcher(line).replaceFirst("");
+                line = line.trim();
+                if (!line.isEmpty()) steps.add(line);
+            }
+
+            if (steps.size() <= 1 && normalized.length() > 200) {
+                steps.clear();
+                String oneLine = normalized.replaceAll("\\s+", " ");
+                for (String s : oneLine.split("(?<=[.!?])\\s+")) {
+                    String t = s.trim();
+                    if (!t.isEmpty()) steps.add(t);
+                }
+            }
+            return steps;
+        }
+
         private void buildSteps(View root, String text) {
             android.widget.LinearLayout container =
                     root.findViewById(R.id.container_steps);
             container.removeAllViews();
 
-            // Pisahkan per baris/paragraf yang tidak kosong
-            String[] rawSteps = text.split("\r?\n+");
-            java.util.List<String> steps = new java.util.ArrayList<>();
-            for (String s : rawSteps) {
-                String trimmed = s.trim();
-                if (!trimmed.isEmpty()) steps.add(trimmed);
-            }
-
-            // Kalau hanya 1 blok panjang, split per kalimat
-            if (steps.size() <= 2 && text.length() > 200) {
-                steps.clear();
-                for (String s : text.split("(?<=[.!?])\\s+")) {
-                    String trimmed = s.trim();
-                    if (!trimmed.isEmpty()) steps.add(trimmed);
-                }
-            }
+            java.util.List<String> steps = parseSteps(text);
 
             if (steps.isEmpty()) {
-                // Fallback ke plain text
                 TextView tvFallback = root.findViewById(R.id.tv_instructions_tab);
                 tvFallback.setVisibility(View.VISIBLE);
                 tvFallback.setText(text);
@@ -406,13 +425,12 @@ public class DetailActivity extends AppCompatActivity {
                         .setText(steps.get(i));
                 container.addView(stepView);
 
-                // Divider tipis antar step
                 View divider = new View(requireContext());
                 android.widget.LinearLayout.LayoutParams lp =
                         new android.widget.LinearLayout.LayoutParams(
                                 android.widget.LinearLayout.LayoutParams.MATCH_PARENT, 1);
                 int margin = (int)(16 * getResources().getDisplayMetrics().density);
-                lp.setMarginStart(margin + 42); // indent setelah nomor
+                lp.setMarginStart(margin + 42);
                 lp.setMarginEnd(margin);
                 divider.setLayoutParams(lp);
                 divider.setBackgroundColor(
