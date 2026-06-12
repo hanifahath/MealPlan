@@ -4,8 +4,6 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 
-// Dipakai untuk detail lengkap satu resep (dari lookup.php)
-// TheMealDB menyimpan bahan di field strIngredient1..20 dan takaran di strMeasure1..20
 public class MealDetail {
 
     @SerializedName("idMeal")
@@ -51,7 +49,7 @@ public class MealDetail {
     @SerializedName("strIngredient19") private String ingredient19;
     @SerializedName("strIngredient20") private String ingredient20;
 
-    // Takaran 1–20
+
     @SerializedName("strMeasure1")  private String measure1;
     @SerializedName("strMeasure2")  private String measure2;
     @SerializedName("strMeasure3")  private String measure3;
@@ -73,7 +71,7 @@ public class MealDetail {
     @SerializedName("strMeasure19") private String measure19;
     @SerializedName("strMeasure20") private String measure20;
 
-    // Getter dasar
+
     public String getId()           { return id; }
     public String getName()         { return name; }
     public String getCategory()     { return category; }
@@ -82,7 +80,7 @@ public class MealDetail {
     public String getThumb()        { return thumb; }
     public String getYoutubeUrl()   { return youtubeUrl; }
 
-    // Helper: kembalikan list pasangan "bahan – takaran" yang tidak kosong
+
     public List<String[]> getIngredientList() {
         String[] ingredients = {
             ingredient1, ingredient2, ingredient3, ingredient4, ingredient5,
@@ -107,7 +105,7 @@ public class MealDetail {
         return result;
     }
 
-    // Helper: gabungkan semua bahan jadi satu string JSON sederhana untuk disimpan ke SQLite
+
     public String getIngredientsAsJson() {
         List<String[]> list = getIngredientList();
         StringBuilder sb = new StringBuilder("[");

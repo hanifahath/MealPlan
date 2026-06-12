@@ -46,7 +46,6 @@ public class GroceryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public void setItems(List<GroceryItem> items) {
         this.rawItems = new ArrayList<>(items);
-        // Pulihkan status "sudah dibeli" dari penyimpanan lokal
         Set<String> checkedKeys = GroceryStore.loadCheckedKeys(context);
         for (GroceryItem it : rawItems) {
             it.setChecked(checkedKeys.contains(GroceryStore.keyOf(it)));

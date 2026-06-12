@@ -11,13 +11,11 @@ public class GroceryItem {
     private String sourceMeal;
     private boolean checked;
 
-    // Constructor untuk header section
     public GroceryItem(String sectionTitle, int viewType) {
         this.name = sectionTitle;
         this.viewType = viewType;
     }
 
-    // Constructor untuk item biasa
     public GroceryItem(String name, String measure, String sourceMeal) {
         this.name = name;
         this.measure = measure;

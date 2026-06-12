@@ -1,10 +1,10 @@
 package com.example.mealplan.model;
 
-// Representasi satu baris di tabel SQLite planner
+
 public class PlannerItem {
 
     private int id;
-    private String dayOfWeek;   // "Senin", "Selasa", dst
+    private String dayOfWeek;
     private String mealId;
     private String mealName;
     private String mealThumb;

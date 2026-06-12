@@ -9,7 +9,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static DatabaseHelper instance = null;
 
-    // SQL buat tabel favorites
     private static final String CREATE_TABLE_FAVORITES =
             "CREATE TABLE " + Constants.TABLE_FAVORITES + " (" +
             Constants.FAV_COL_ID          + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -20,7 +19,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             Constants.FAV_COL_INGREDIENTS + " TEXT, " +
             Constants.FAV_COL_INSTRUCTIONS+ " TEXT)";
 
-    // SQL buat tabel planner
     private static final String CREATE_TABLE_PLANNER =
             "CREATE TABLE " + Constants.TABLE_PLANNER + " (" +
             Constants.PLAN_COL_ID         + " INTEGER PRIMARY KEY AUTOINCREMENT, " +

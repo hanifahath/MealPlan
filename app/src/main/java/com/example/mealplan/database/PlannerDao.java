@@ -17,7 +17,6 @@ public class PlannerDao {
         dbHelper = DatabaseHelper.getInstance(context);
     }
 
-    // Insert resep ke hari tertentu - TANPA hapus yang lama (support multi-meal)
     public boolean insert(PlannerItem item) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -29,7 +28,6 @@ public class PlannerDao {
         return result != -1;
     }
 
-    // Hapus resep spesifik berdasarkan id row
     public boolean deleteById(int id) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         int rows = db.delete(Constants.TABLE_PLANNER,
@@ -37,7 +35,6 @@ public class PlannerDao {
         return rows > 0;
     }
 
-    // Hapus semua resep di satu hari
     public boolean deleteByDay(String day) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         int rows = db.delete(Constants.TABLE_PLANNER,
@@ -45,7 +42,6 @@ public class PlannerDao {
         return rows > 0;
     }
 
-    // Ambil semua planner
     public List<PlannerItem> getAll() {
         List<PlannerItem> list = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -60,7 +56,6 @@ public class PlannerDao {
         return list;
     }
 
-    // Ambil semua resep di satu hari
     public List<PlannerItem> getByDay(String day) {
         List<PlannerItem> list = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();

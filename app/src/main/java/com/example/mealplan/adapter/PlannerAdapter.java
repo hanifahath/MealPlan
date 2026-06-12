@@ -30,20 +30,17 @@ public class PlannerAdapter extends RecyclerView.Adapter<PlannerAdapter.DayViewH
 
     private final Context context;
     private final OnPlannerActionListener listener;
-    // Map dari nama hari ke list resep di hari itu
     private final Map<String, List<PlannerItem>> dayMeals = new HashMap<>();
 
     public PlannerAdapter(Context context, OnPlannerActionListener listener) {
         this.context = context;
         this.listener = listener;
-        // Inisialisasi semua hari dengan list kosong
         for (String day : Constants.DAYS_OF_WEEK) {
             dayMeals.put(day, new ArrayList<>());
         }
     }
 
     public void setPlannerItems(List<PlannerItem> items) {
-        // Reset
         for (String day : Constants.DAYS_OF_WEEK) {
             dayMeals.put(day, new ArrayList<>());
         }
@@ -69,7 +66,6 @@ public class PlannerAdapter extends RecyclerView.Adapter<PlannerAdapter.DayViewH
         holder.tvDay.setText(day);
         holder.btnAdd.setOnClickListener(v -> listener.onAddClick(day));
 
-        // Clear container dulu
         holder.containerMeals.removeAllViews();
 
         if (meals == null || meals.isEmpty()) {
@@ -91,7 +87,6 @@ public class PlannerAdapter extends RecyclerView.Adapter<PlannerAdapter.DayViewH
                         .centerCrop()
                         .into(imgThumb);
 
-                // Fix 14: klik item buka DetailActivity
                 mealView.setOnClickListener(v -> {
                     Intent intent = new Intent(context, DetailActivity.class);
                     intent.putExtra(Constants.INTENT_MEAL_ID,       meal.getMealId());

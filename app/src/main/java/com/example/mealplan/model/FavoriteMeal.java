@@ -1,14 +1,13 @@
 package com.example.mealplan.model;
 
-// Representasi satu baris di tabel SQLite favorites
 public class FavoriteMeal {
 
-    private int id;           // primary key SQLite
-    private String mealId;    // idMeal dari TheMealDB
+    private int id;
+    private String mealId;
     private String mealName;
     private String mealThumb;
     private String mealCategory;
-    private String ingredients;   // JSON string
+    private String ingredients;
     private String instructions;
 
     public FavoriteMeal() {}

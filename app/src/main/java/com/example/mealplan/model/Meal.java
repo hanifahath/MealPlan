@@ -2,7 +2,6 @@ package com.example.mealplan.model;
 
 import com.google.gson.annotations.SerializedName;
 
-// Dipakai untuk daftar resep ringkas (dari filter.php dan search.php)
 public class Meal {
 
     @SerializedName("idMeal")
@@ -14,7 +13,6 @@ public class Meal {
     @SerializedName("strMealThumb")
     private String thumb;
 
-    // Tidak selalu ada di response list, diisi manual saat perlu
     private String category;
 
     public Meal(String id, String name, String thumb, String category) {
