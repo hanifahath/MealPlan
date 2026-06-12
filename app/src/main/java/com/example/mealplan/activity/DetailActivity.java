@@ -118,8 +118,7 @@ public class DetailActivity extends AppCompatActivity {
         androidx.core.view.ViewCompat.setTransitionName(imgThumb, "meal_image");
         if (!mealThumb.isEmpty()) {
             supportPostponeEnterTransition();
-            imgThumb.postDelayed(this::supportStartPostponedEnterTransition, 250);
-            Glide.with(this).load(mealThumb).centerCrop()
+            Glide.with(this).load(mealThumb).centerCrop().dontAnimate()
                     .listener(new com.bumptech.glide.request.RequestListener<android.graphics.drawable.Drawable>() {
                         @Override
                         public boolean onLoadFailed(@androidx.annotation.Nullable com.bumptech.glide.load.engine.GlideException e,
@@ -351,8 +350,9 @@ public class DetailActivity extends AppCompatActivity {
         tvCategory.setText(com.example.mealplan.utils.LocaleMapper.category(detail.getCategory() != null ? detail.getCategory() : mealCategory));
         tvArea.setText(com.example.mealplan.utils.LocaleMapper.area(detail.getArea() != null ? detail.getArea() : ""));
 
-        if (detail.getThumb() != null && !detail.getThumb().isEmpty()) {
-            Glide.with(this).load(detail.getThumb()).centerCrop().into(imgThumb);
+        if (detail.getThumb() != null && !detail.getThumb().isEmpty()
+                && !detail.getThumb().equals(mealThumb)) {
+            Glide.with(this).load(detail.getThumb()).centerCrop().dontAnimate().into(imgThumb);
         }
 
         if (ingredientsTab != null) {
