@@ -1,6 +1,5 @@
 package com.example.mealplan.activity;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -46,11 +45,11 @@ public class SearchActivity extends AppCompatActivity {
     private EditText etSearch;
     private ImageButton btnBack, btnClear;
     private RecyclerView rvRecent, rvResults;
-    private LinearLayout layoutRecent, layoutNoResult, layoutSearchError;
+    private LinearLayout layoutRecent, layoutResults, layoutNoResult, layoutSearchError;
     private View progressSearch;
     private View skeletonSearch;
     private ObjectAnimator shimmerAnim;
-    private TextView tvNoResultQuery;
+    private TextView tvNoResultQuery, tvResultCount;
     private String lastQuery = "";
 
     private MealAdapter mealAdapter;
@@ -77,22 +76,25 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        etSearch       = findViewById(R.id.et_search);
-        btnBack        = findViewById(R.id.btn_back_search);
-        btnClear       = findViewById(R.id.btn_clear_search);
-        rvRecent       = findViewById(R.id.rv_recent_search);
-        rvResults      = findViewById(R.id.rv_search_results);
-        layoutRecent   = findViewById(R.id.layout_recent);
-        layoutNoResult = findViewById(R.id.layout_no_result);
-        progressSearch = findViewById(R.id.progress_search);
-        skeletonSearch = findViewById(R.id.skeleton_search);
-        tvNoResultQuery = findViewById(R.id.tv_no_result_query);
+        etSearch          = findViewById(R.id.et_search);
+        btnBack           = findViewById(R.id.btn_back_search);
+        btnClear          = findViewById(R.id.btn_clear_search);
+        rvRecent          = findViewById(R.id.rv_recent_search);
+        rvResults         = findViewById(R.id.rv_search_results);
+        layoutRecent      = findViewById(R.id.layout_recent);
+        layoutResults     = findViewById(R.id.layout_results);
+        layoutNoResult    = findViewById(R.id.layout_no_result);
+        progressSearch    = findViewById(R.id.progress_search);
+        skeletonSearch    = findViewById(R.id.skeleton_search);
+        tvNoResultQuery   = findViewById(R.id.tv_no_result_query);
+        tvResultCount     = findViewById(R.id.tv_result_count);
         layoutSearchError = findViewById(R.id.layout_search_error);
         findViewById(R.id.btn_search_retry).setOnClickListener(v -> {
             if (!lastQuery.isEmpty()) performSearch(lastQuery);
         });
 
         mealAdapter = new MealAdapter(this);
+        mealAdapter.setFeaturedEnabled(false);
         rvResults.setLayoutManager(new GridLayoutManager(this, 2));
         rvResults.setAdapter(mealAdapter);
 
@@ -155,7 +157,7 @@ public class SearchActivity extends AppCompatActivity {
                     } else {
                         saveQuery(query);
                         mealAdapter.setMeals(meals);
-                        showResultState();
+                        showResultState(meals.size(), query);
                     }
                 } else { showErrorState(); }
             }
@@ -219,7 +221,7 @@ public class SearchActivity extends AppCompatActivity {
         hideSkeletonSearch();
         layoutRecent.setVisibility(View.VISIBLE);
         progressSearch.setVisibility(View.GONE);
-        rvResults.setVisibility(View.GONE);
+        layoutResults.setVisibility(View.GONE);
         layoutNoResult.setVisibility(View.GONE);
         layoutSearchError.setVisibility(View.GONE);
         recentAdapter.setQueries(new ArrayList<>(recentQueries));
@@ -229,26 +231,28 @@ public class SearchActivity extends AppCompatActivity {
     private void showLoadingState() {
         layoutRecent.setVisibility(View.GONE);
         progressSearch.setVisibility(View.GONE);
-        rvResults.setVisibility(View.GONE);
+        layoutResults.setVisibility(View.GONE);
         layoutNoResult.setVisibility(View.GONE);
         layoutSearchError.setVisibility(View.GONE);
         showSkeletonSearch();
     }
 
-    private void showResultState() {
+    private void showResultState(int count, String query) {
         hideSkeletonSearch();
         layoutRecent.setVisibility(View.GONE);
         progressSearch.setVisibility(View.GONE);
-        rvResults.setVisibility(View.VISIBLE);
+        layoutResults.setVisibility(View.VISIBLE);
         layoutNoResult.setVisibility(View.GONE);
         layoutSearchError.setVisibility(View.GONE);
+        tvResultCount.setText(count + " hasil untuk \"" + query + "\"");
+        rvResults.scrollToPosition(0);
     }
 
     private void showNoResultState(String query) {
         hideSkeletonSearch();
         layoutRecent.setVisibility(View.GONE);
         progressSearch.setVisibility(View.GONE);
-        rvResults.setVisibility(View.GONE);
+        layoutResults.setVisibility(View.GONE);
         layoutSearchError.setVisibility(View.GONE);
         layoutNoResult.setVisibility(View.VISIBLE);
         tvNoResultQuery.setText("Tidak ada hasil untuk \"" + query + "\"");
@@ -258,7 +262,7 @@ public class SearchActivity extends AppCompatActivity {
         hideSkeletonSearch();
         layoutRecent.setVisibility(View.GONE);
         progressSearch.setVisibility(View.GONE);
-        rvResults.setVisibility(View.GONE);
+        layoutResults.setVisibility(View.GONE);
         layoutNoResult.setVisibility(View.GONE);
         layoutSearchError.setVisibility(View.VISIBLE);
     }

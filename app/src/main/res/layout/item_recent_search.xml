@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:paddingTop="10dp"
-    android:paddingBottom="10dp"
+    android:paddingTop="11dp"
+    android:paddingBottom="11dp"
     android:gravity="center_vertical"
     android:foreground="?attr/selectableItemBackground">
 
@@ -14,7 +14,7 @@
         android:layout_width="18dp"
         android:layout_height="18dp"
         android:src="@drawable/ic_search"
-        app:tint="#BDBDBD"
+        app:tint="@color/text_tertiary"
         android:layout_marginEnd="14dp"
         android:contentDescription="@null"/>
 
@@ -23,15 +23,17 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textSize="14sp"
-        android:textColor="?attr/colorOnBackground"/>
+        android:textSize="13.5sp"
+        android:textColor="@color/text_secondary"/>
 
     <ImageButton
         android:id="@+id/btn_remove_recent"
         android:layout_width="32dp"
         android:layout_height="32dp"
+        android:padding="8dp"
         android:src="@drawable/ic_close"
+        android:scaleType="fitCenter"
         android:background="?attr/selectableItemBackgroundBorderless"
-        app:tint="#BDBDBD"
+        app:tint="@color/text_tertiary"
         android:contentDescription="Hapus"/>
 </LinearLayout>

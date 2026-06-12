@@ -5,35 +5,37 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="?android:attr/colorBackground"
+    android:background="@color/app_bg"
     android:fitsSystemWindows="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingStart="8dp"
-        android:paddingEnd="12dp"
-        android:paddingTop="12dp"
-        android:paddingBottom="12dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="14dp"
+        android:paddingBottom="14dp"
         android:gravity="center_vertical">
 
         <ImageButton
             android:id="@+id/btn_back_search"
             android:layout_width="40dp"
             android:layout_height="40dp"
+            android:padding="9dp"
             android:src="@drawable/ic_back"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            app:tint="?attr/colorOnBackground"
+            android:scaleType="fitCenter"
+            android:background="@drawable/bg_hdr_btn"
+            app:tint="@color/text_primary"
             android:contentDescription="@string/back"/>
 
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="44dp"
+            android:layout_height="46dp"
             android:layout_weight="1"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="10dp"
             android:orientation="horizontal"
-            android:background="@drawable/bg_search_bar"
+            android:background="@drawable/bg_search_bar_active"
             android:gravity="center_vertical"
             android:paddingStart="14dp"
             android:paddingEnd="8dp">
@@ -42,7 +44,7 @@
                 android:layout_width="18dp"
                 android:layout_height="18dp"
                 android:src="@drawable/ic_search"
-                app:tint="#9E9E9E"
+                app:tint="@color/primary_color"
                 android:contentDescription="@null"/>
 
             <EditText
@@ -53,8 +55,8 @@
                 android:layout_marginStart="8dp"
                 android:hint="@string/search_hint"
                 android:textSize="14sp"
-                android:textColor="?attr/colorOnBackground"
-                android:textColorHint="#9E9E9E"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_tertiary"
                 android:background="@null"
                 android:inputType="text"
                 android:imeOptions="actionSearch"
@@ -64,18 +66,15 @@
                 android:id="@+id/btn_clear_search"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
+                android:padding="8dp"
                 android:src="@drawable/ic_close"
+                android:scaleType="fitCenter"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                app:tint="#9E9E9E"
+                app:tint="@color/text_tertiary"
                 android:visibility="gone"
                 android:contentDescription="Hapus"/>
         </LinearLayout>
     </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/divider_color"/>
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -87,16 +86,18 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:paddingTop="18dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/recent_search"
-                android:textSize="14sp"
+                android:textSize="13sp"
                 android:textStyle="bold"
-                android:textColor="?attr/colorOnBackground"
-                android:layout_marginBottom="12dp"/>
+                android:textColor="@color/text_primary"
+                android:layout_marginBottom="6dp"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_recent_search"
@@ -109,7 +110,7 @@
                 android:layout_height="wrap_content"
                 android:text="Belum ada pencarian"
                 android:textSize="13sp"
-                android:textColor="#9E9E9E"
+                android:textColor="@color/text_tertiary"
                 android:gravity="center"
                 android:layout_marginTop="40dp"
                 android:visibility="gone"/>
@@ -130,15 +131,35 @@
             android:layout_height="match_parent"
             android:visibility="gone"/>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_search_results"
+        <LinearLayout
+            android:id="@+id/layout_results"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            android:paddingTop="8dp"
-            android:clipToPadding="false"
-            android:visibility="gone"/>
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/tv_result_count"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:paddingTop="14dp"
+                android:paddingBottom="4dp"
+                android:textSize="12.5sp"
+                android:textColor="@color/text_secondary"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_search_results"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:paddingTop="6dp"
+                android:paddingBottom="12dp"
+                android:clipToPadding="false"/>
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/layout_no_result"
@@ -163,7 +184,7 @@
                 android:layout_marginTop="16dp"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:textColor="?attr/colorOnBackground"
+                android:textColor="@color/text_primary"
                 android:gravity="center"/>
 
             <TextView
@@ -172,7 +193,7 @@
                 android:layout_marginTop="6dp"
                 android:text="Coba kata kunci lain"
                 android:textSize="13sp"
-                android:textColor="#9E9E9E"/>
+                android:textColor="@color/text_tertiary"/>
         </LinearLayout>
 
         <LinearLayout
@@ -187,7 +208,7 @@
             <ImageView
                 android:layout_width="72dp"
                 android:layout_height="72dp"
-                android:src="@drawable/ic_search"
+                android:src="@drawable/ic_no_internet"
                 app:tint="@color/primary_light"
                 android:contentDescription="@null"/>
 
@@ -198,16 +219,17 @@
                 android:text="@string/search_load_failed"
                 android:textSize="15sp"
                 android:gravity="center"
-                android:textColor="?attr/colorOnBackground"/>
+                android:textColor="@color/text_secondary"/>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_search_retry"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="@string/detail_retry"
                 android:textColor="#FFFFFF"
-                android:backgroundTint="@color/primary_color"/>
+                android:backgroundTint="@color/primary_color"
+                app:cornerRadius="13dp"/>
         </LinearLayout>
     </FrameLayout>
 </LinearLayout>
