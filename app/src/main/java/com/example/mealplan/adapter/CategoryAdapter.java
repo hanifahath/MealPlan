@@ -16,13 +16,12 @@ import java.util.List;
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHolder> {
 
     public interface OnCategoryClickListener {
-        // null = "Semua" dipilih
         void onCategoryClick(String categoryName);
     }
 
     private final Context context;
     private List<Category> categories = new ArrayList<>();
-    private int selectedPosition = 1; // default pilih kategori pertama (index 1, setelah "Semua")
+    private int selectedPosition = 0;
     private final OnCategoryClickListener listener;
 
     public CategoryAdapter(Context context, OnCategoryClickListener listener) {

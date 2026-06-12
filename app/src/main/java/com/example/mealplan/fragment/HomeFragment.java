@@ -163,6 +163,8 @@ public class HomeFragment extends Fragment {
                     }
                     cats.add(0, new Category(null, null, null));
                     categoryAdapter.setCategories(cats);
+                    currentCategory = null;
+                    loadDefaultMeals();
                     if (cats.size() > 1) {
                         currentCategory = cats.get(1).getName();
                         loadMealsByCategory(currentCategory);
