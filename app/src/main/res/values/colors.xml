@@ -1,32 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Primary: warm deep orange -->
-    <color name="primary_color">#E65100</color>
-    <color name="primary_dark">#BF360C</color>
-    <color name="primary_light">#FF8A65</color>
-    <color name="primary_surface">#FFF3E0</color>
+    <!-- ============================================================
+         MealPlan palette — LIGHT (warm terracotta)
+         Names below are SEMANTIC and auto-swap with values-night.
+         ============================================================ -->
 
-    <!-- Accent -->
-    <color name="accent_color">#FF6D00</color>
+    <!-- Accent / brand -->
+    <color name="primary_color">#D4622A</color>
+    <color name="primary_dark">#B85020</color>
+    <color name="primary_light">#E8895A</color>
+    <color name="accent_color">#D4622A</color>
+    <color name="accent_soft">#FAEEE7</color>
+    <color name="accent_soft2">#F5DDD0</color>
+    <color name="primary_surface">#FAEEE7</color>
+
+    <!-- Backgrounds & surfaces -->
+    <color name="app_bg">#FDF9F6</color>
+    <color name="app_bg2">#F5EFE9</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="surface2">#FAF6F2</color>
+    <color name="bnav_bg">#FFFFFF</color>
+    <color name="input_bg">#F5EFE9</color>
+    <color name="stats_bg">#FAEEE7</color>
+
+    <!-- Borders & dividers -->
+    <color name="border_color">#EDE5DC</color>
+    <color name="divider_color">#EDE5DC</color>
+    <color name="check_border">#C8B8AD</color>
+
+    <!-- Text -->
+    <color name="text_primary">#1C1410</color>
+    <color name="text_secondary">#6B5C52</color>
+    <color name="text_tertiary">#A8978D</color>
+    <color name="text_primary_light">#1C1410</color>
+    <color name="text_secondary_light">#6B5C52</color>
+    <color name="text_primary_dark">#F0E8E2</color>
+    <color name="text_secondary_dark">#B09888</color>
+
+    <!-- Chips -->
+    <color name="chip_text_selected">#FFFFFF</color>
+    <color name="chip_text_normal">#6B5C52</color>
+    <color name="chip_bg_normal">#EDE5DC</color>
 
     <!-- Semantic -->
     <color name="error_color">#C62828</color>
     <color name="success_color">#2E7D32</color>
-    <color name="checked_color">#9E9E9E</color>
+    <color name="checked_color">#A8978D</color>
+    <color name="del_bg">#FEF0EA</color>
+    <color name="del_color">#B85020</color>
 
-    <!-- Chip -->
-    <color name="chip_text_selected">#FFFFFF</color>
-    <color name="chip_text_normal">#5D4037</color>
-    <color name="chip_bg_normal">#FBE9E7</color>
-
-    <!-- Neutral -->
+    <!-- Neutral / overlays -->
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
-    <color name="divider_color">#F0E6E0</color>
-
-    <!-- Text -->
-    <color name="text_primary_light">#1A1A1A</color>
-    <color name="text_secondary_light">#6D4C41</color>
-    <color name="text_primary_dark">#F5F0EE</color>
-    <color name="text_secondary_dark">#BCAAA4</color>
+    <color name="skeleton_color">#22808080</color>
+    <color name="overlay_dark">#88000000</color>
 </resources>

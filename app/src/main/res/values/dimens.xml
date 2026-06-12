@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="card_radius">14dp</dimen>
-    <dimen name="card_elevation">3dp</dimen>
-    <dimen name="page_padding">16dp</dimen>
-    <dimen name="item_spacing">10dp</dimen>
+    <dimen name="card_radius">16dp</dimen>
+    <dimen name="card_elevation">2dp</dimen>
+    <dimen name="page_padding">20dp</dimen>
+    <dimen name="item_spacing">12dp</dimen>
+
+    <!-- Extra radii matching the mockup -->
+    <dimen name="radius_sm">12dp</dimen>
+    <dimen name="radius_md">16dp</dimen>
+    <dimen name="radius_lg">20dp</dimen>
+    <dimen name="radius_pill">24dp</dimen>
 </resources>

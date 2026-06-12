@@ -1,44 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Base application theme (LIGHT). Colors auto-swap via values-night/colors.xml. -->
     <style name="Theme.MealPlan" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/primary_color</item>
         <item name="colorPrimaryVariant">@color/primary_dark</item>
+        <item name="colorOnPrimary">@color/white</item>
         <item name="colorSecondary">@color/accent_color</item>
-        <item name="android:colorBackground">#FFFAF7</item>
-        <item name="colorSurface">#FFFFFF</item>
-        <item name="colorOnBackground">@color/text_primary_light</item>
-        <item name="colorOnSurface">@color/text_primary_light</item>
-        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorSecondaryVariant">@color/primary_dark</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="android:colorBackground">@color/app_bg</item>
+        <item name="colorSurface">@color/surface</item>
+        <item name="colorOnBackground">@color/text_primary</item>
+        <item name="colorOnSurface">@color/text_primary</item>
         <item name="colorError">@color/error_color</item>
-        <item name="android:windowBackground">#FFFAF7</item>
-        <item name="cardBackgroundColor">#FFFFFF</item>
+        <item name="android:windowBackground">@color/app_bg</item>
+        <item name="cardBackgroundColor">@color/surface</item>
         <item name="bottomNavigationStyle">@style/BottomNavStyle</item>
+
+        <!-- System bars -->
+        <item name="android:statusBarColor">@color/app_bg</item>
         <item name="android:windowLightStatusBar">true</item>
+        <item name="android:navigationBarColor">@color/bnav_bg</item>
+
+        <!-- ========================================================
+             TYPOGRAPHY — Plus Jakarta Sans
+             The .ttf could not be bundled offline. To enable it:
+             1. In Android Studio: right-click res > New > Font >
+                "Downloadable Fonts", search "Plus Jakarta Sans".
+                (This auto-creates res/font/plus_jakarta_sans.xml and
+                 the GMS font certs — no manual cert files needed.)
+             2. Replace the two values below with
+                @font/plus_jakarta_sans
+             ======================================================== -->
+        <item name="fontFamily">sans-serif</item>
+        <item name="android:fontFamily">sans-serif</item>
     </style>
 
+    <!-- Splash -->
     <style name="Theme.MealPlan.Splash" parent="Theme.MealPlan">
         <item name="android:windowBackground">@drawable/splash_background</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
     </style>
 
+    <!-- Bottom navigation (shared across light & dark via swapping colors) -->
     <style name="BottomNavStyle" parent="Widget.MaterialComponents.BottomNavigationView">
-        <item name="backgroundTint">#FFFFFF</item>
+        <item name="backgroundTint">@color/bnav_bg</item>
         <item name="itemIconTint">@color/bottom_nav_color</item>
         <item name="itemTextColor">@color/bottom_nav_color</item>
         <item name="elevation">8dp</item>
     </style>
 
+    <!-- Section heading -->
     <style name="SectionTitle" parent="TextAppearance.MaterialComponents.Headline6">
         <item name="android:textSize">18sp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/text_primary_light</item>
+        <item name="android:textColor">@color/text_primary</item>
         <item name="android:letterSpacing">-0.01</item>
     </style>
 
-
-    <!-- Tab text: bold saat aktif, lighter saat tidak aktif -->
+    <!-- Tab text: not all-caps, medium weight -->
     <style name="TabTextAppearance" parent="TextAppearance.Design.Tab">
         <item name="android:textSize">13sp</item>
         <item name="android:fontFamily">sans-serif-medium</item>

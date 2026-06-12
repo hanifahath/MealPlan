@@ -1,47 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- DARK overrides. Color values come from values-night/colors.xml,
+         so we only need to flip booleans (light status bar) and the
+         splash drawable here. -->
     <style name="Theme.MealPlan" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/primary_light</item>
-        <item name="colorPrimaryVariant">@color/primary_color</item>
-        <item name="colorSecondary">@color/primary_light</item>
-        <item name="android:colorBackground">#1A1210</item>
-        <item name="colorSurface">#2C2320</item>
-        <item name="colorOnBackground">@color/text_primary_dark</item>
-        <item name="colorOnSurface">@color/text_primary_dark</item>
-        <item name="colorOnPrimary">#1A1210</item>
-        <item name="colorError">#EF9A9A</item>
-        <item name="android:windowBackground">#1A1210</item>
-        <item name="cardBackgroundColor">#2C2320</item>
-        <item name="bottomNavigationStyle">@style/BottomNavStyleDark</item>
+        <item name="colorPrimary">@color/primary_color</item>
+        <item name="colorPrimaryVariant">@color/primary_dark</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/accent_color</item>
+        <item name="colorSecondaryVariant">@color/primary_dark</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="android:colorBackground">@color/app_bg</item>
+        <item name="colorSurface">@color/surface</item>
+        <item name="colorOnBackground">@color/text_primary</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorError">@color/error_color</item>
+        <item name="android:windowBackground">@color/app_bg</item>
+        <item name="cardBackgroundColor">@color/surface</item>
+        <item name="bottomNavigationStyle">@style/BottomNavStyle</item>
+
+        <item name="android:statusBarColor">@color/app_bg</item>
         <item name="android:windowLightStatusBar">false</item>
+        <item name="android:navigationBarColor">@color/bnav_bg</item>
+
+        <item name="fontFamily">sans-serif</item>
+        <item name="android:fontFamily">sans-serif</item>
     </style>
 
     <style name="Theme.MealPlan.Splash" parent="Theme.MealPlan">
         <item name="android:windowBackground">@drawable/splash_background_dark</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
-    </style>
-
-    <style name="BottomNavStyleDark" parent="Widget.MaterialComponents.BottomNavigationView">
-        <item name="backgroundTint">#2C2320</item>
-        <item name="itemIconTint">@color/bottom_nav_color</item>
-        <item name="itemTextColor">@color/bottom_nav_color</item>
-        <item name="elevation">8dp</item>
-    </style>
-
-    <style name="SectionTitle" parent="TextAppearance.MaterialComponents.Headline6">
-        <item name="android:textSize">18sp</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/text_primary_dark</item>
-        <item name="android:letterSpacing">-0.01</item>
-    </style>
-
-
-    <style name="TabTextAppearance" parent="TextAppearance.Design.Tab">
-        <item name="android:textSize">13sp</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
-        <item name="textAllCaps">false</item>
     </style>
 
 </resources>

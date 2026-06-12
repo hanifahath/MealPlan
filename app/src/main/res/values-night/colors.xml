@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ============================================================
+         MealPlan palette — DARK (warm terracotta)
+         Overrides the same semantic names from values/colors.xml.
+         ============================================================ -->
+
+    <!-- Accent / brand -->
+    <color name="primary_color">#E07040</color>
+    <color name="primary_dark">#C8562A</color>
+    <color name="primary_light">#E8895A</color>
+    <color name="accent_color">#E07040</color>
+    <color name="accent_soft">#3A2218</color>
+    <color name="accent_soft2">#4A2C1E</color>
+    <color name="primary_surface">#3A2218</color>
+
+    <!-- Backgrounds & surfaces -->
+    <color name="app_bg">#1A1310</color>
+    <color name="app_bg2">#221A16</color>
+    <color name="surface">#2A1F1A</color>
+    <color name="surface2">#241A15</color>
+    <color name="bnav_bg">#221A16</color>
+    <color name="input_bg">#2A1F1A</color>
+    <color name="stats_bg">#3A2218</color>
+
+    <!-- Borders & dividers -->
+    <color name="border_color">#3D2E26</color>
+    <color name="divider_color">#3D2E26</color>
+    <color name="check_border">#5A4038</color>
+
+    <!-- Text -->
+    <color name="text_primary">#F0E8E2</color>
+    <color name="text_secondary">#B09888</color>
+    <color name="text_tertiary">#7A6860</color>
+    <!-- fixed-meaning legacy names kept stable -->
+    <color name="text_primary_light">#1C1410</color>
+    <color name="text_secondary_light">#6B5C52</color>
+    <color name="text_primary_dark">#F0E8E2</color>
+    <color name="text_secondary_dark">#B09888</color>
+
+    <!-- Chips -->
+    <color name="chip_text_selected">#FFFFFF</color>
+    <color name="chip_text_normal">#B09888</color>
+    <color name="chip_bg_normal">#3D2E26</color>
+
+    <!-- Semantic -->
+    <color name="error_color">#EF9A9A</color>
+    <color name="success_color">#81C784</color>
+    <color name="checked_color">#7A6860</color>
+    <color name="del_bg">#3A2010</color>
+    <color name="del_color">#E07040</color>
+
+    <!-- Neutral / overlays -->
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="skeleton_color">#22FFFFFF</color>
+    <color name="overlay_dark">#AA000000</color>
+</resources>
