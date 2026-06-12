@@ -33,8 +33,8 @@
              2. Replace the two values below with
                 @font/plus_jakarta_sans
              ======================================================== -->
-        <item name="fontFamily">sans-serif</item>
-        <item name="android:fontFamily">sans-serif</item>
+        <item name="fontFamily">@font/plus_jakarta_sans</item>
+        <item name="android:fontFamily">plus_jakarta_sans</item>
     </style>
 
     <!-- Splash -->
