@@ -5,17 +5,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="?android:attr/colorBackground">
+    android:background="@color/app_bg">
 
-    <!-- Header -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingStart="20dp"
-        android:paddingEnd="12dp"
-        android:paddingTop="12dp"
-        android:paddingBottom="8dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="10dp"
         android:gravity="center_vertical">
 
         <LinearLayout
@@ -28,29 +27,29 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/favorites"
-                android:textSize="24sp"
+                android:textSize="25sp"
                 android:textStyle="bold"
-                android:textColor="?attr/colorOnBackground"/>
+                android:textColor="@color/text_primary"/>
 
-            <!-- Counter sebagai plain text bukan pill -->
             <TextView
                 android:id="@+id/tv_fav_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:textSize="12sp"
-                android:textColor="#9E9E9E"/>
+                android:textColor="@color/text_tertiary"/>
         </LinearLayout>
 
-        <!-- Sort button -->
         <ImageButton
             android:id="@+id/btn_sort"
             android:layout_width="40dp"
             android:layout_height="40dp"
+            android:padding="9dp"
             android:src="@drawable/ic_sort"
-            android:background="@drawable/bg_chip_normal"
-            app:tint="@color/primary_color"
-            android:contentDescription="Sort"/>
+            android:scaleType="fitCenter"
+            android:background="@drawable/bg_hdr_btn"
+            app:tint="@color/text_secondary"
+            android:contentDescription="Urutkan"/>
     </LinearLayout>
 
     <FrameLayout
@@ -62,13 +61,12 @@
             android:id="@+id/rv_favorites"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
             android:paddingTop="4dp"
             android:paddingBottom="16dp"
             android:clipToPadding="false"/>
 
-        <!-- Empty state -->
         <LinearLayout
             android:id="@+id/layout_empty"
             android:layout_width="match_parent"
@@ -92,7 +90,7 @@
                 android:text="Belum ada favorit"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:textColor="?attr/colorOnBackground"/>
+                android:textColor="@color/text_primary"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -100,7 +98,7 @@
                 android:layout_marginTop="6dp"
                 android:text="Tambahkan resep dari halaman utama"
                 android:textSize="13sp"
-                android:textColor="#9E9E9E"
+                android:textColor="@color/text_tertiary"
                 android:gravity="center"/>
         </LinearLayout>
     </FrameLayout>
