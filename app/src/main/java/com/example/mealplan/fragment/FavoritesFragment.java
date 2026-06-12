@@ -85,7 +85,6 @@ public class FavoritesFragment extends Fragment {
         rvFavorites.setLayoutManager(new GridLayoutManager(requireContext(), 2));
         rvFavorites.setAdapter(adapter);
         view.findViewById(R.id.btn_sort).setOnClickListener(v -> showSortDialog());
-        loadFavorites();
     }
 
     @Override public void onResume() { super.onResume(); loadFavorites(); }
@@ -96,7 +95,6 @@ public class FavoritesFragment extends Fragment {
             applySortInPlace(list);
             requireActivity().runOnUiThread(() -> {
                 adapter.setFavorites(list);
-                // Plain text, bukan pill
                 tvFavCount.setText(list.size() + " resep tersimpan");
                 checkEmpty();
             });

@@ -42,7 +42,6 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
 
     public void setFavorites(List<FavoriteMeal> favorites) {
         this.favorites = new ArrayList<>(favorites);
-        lastAnimPos = -1;
         notifyDataSetChanged();
     }
 
