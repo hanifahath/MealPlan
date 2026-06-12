@@ -1,16 +1,19 @@
 package com.example.mealplan.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.mealplan.R;
@@ -30,6 +33,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
     private final Context context;
     private List<FavoriteMeal> favorites = new ArrayList<>();
     private final OnFavoriteActionListener listener;
+    private int lastAnimPos = -1;
 
     public FavoriteAdapter(Context context, OnFavoriteActionListener listener) {
         this.context = context;
@@ -38,6 +42,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
 
     public void setFavorites(List<FavoriteMeal> favorites) {
         this.favorites = new ArrayList<>(favorites);
+        lastAnimPos = -1;
         notifyDataSetChanged();
     }
 
@@ -65,7 +70,6 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
         FavoriteMeal meal = favorites.get(position);
 
         holder.tvName.setText(meal.getMealName());
-        holder.tvCategory.setText(meal.getMealCategory());
         holder.tvCategory.setText(com.example.mealplan.utils.LocaleMapper.category(meal.getMealCategory()));
 
         Glide.with(context)
@@ -74,17 +78,21 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
                 .centerCrop()
                 .into(holder.imgThumb);
 
-        // Klik card → buka detail
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, DetailActivity.class);
             intent.putExtra(Constants.INTENT_MEAL_ID,       meal.getMealId());
             intent.putExtra(Constants.INTENT_MEAL_NAME,     meal.getMealName());
             intent.putExtra(Constants.INTENT_MEAL_THUMB,    meal.getMealThumb());
             intent.putExtra(Constants.INTENT_MEAL_CATEGORY, meal.getMealCategory());
-            context.startActivity(intent);
+            if (context instanceof Activity) {
+                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                        (Activity) context, holder.imgThumb, "meal_image");
+                context.startActivity(intent, options.toBundle());
+            } else {
+                context.startActivity(intent);
+            }
         });
 
-        // Titik tiga → popup menu
         holder.btnMenu.setOnClickListener(v -> {
             PopupMenu popup = new PopupMenu(context, holder.btnMenu);
             popup.getMenu().add(0, 1, 0, "Bagikan");
@@ -101,6 +109,21 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
             });
             popup.show();
         });
+
+        animateItem(holder.itemView, position);
+    }
+
+    private void animateItem(View view, int position) {
+        if (position > lastAnimPos) {
+            view.startAnimation(AnimationUtils.loadAnimation(context, R.anim.item_slide_up));
+            lastAnimPos = position;
+        }
+    }
+
+    @Override
+    public void onViewDetachedFromWindow(@NonNull ViewHolder holder) {
+        super.onViewDetachedFromWindow(holder);
+        holder.itemView.clearAnimation();
     }
 
     @Override

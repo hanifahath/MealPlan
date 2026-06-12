@@ -14,22 +14,20 @@
         android:layout_width="match_parent"
         android:layout_height="180dp">
 
-        <!-- Foto resep -->
         <ImageView
             android:id="@+id/img_meal_thumb"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
+            android:transitionName="meal_image"
             android:contentDescription="@string/meal_image"/>
 
-        <!-- Gradient gelap di bawah foto -->
         <View
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:layout_gravity="bottom"
             android:background="@drawable/gradient_card_bottom"/>
 
-        <!-- Badge kategori pojok kiri atas -->
         <TextView
             android:id="@+id/tv_meal_category"
             android:layout_width="wrap_content"
@@ -45,7 +43,6 @@
             android:background="@drawable/bg_badge_category"
             android:visibility="gone"/>
 
-        <!-- Nama resep overlay di bawah foto -->
         <TextView
             android:id="@+id/tv_meal_name"
             android:layout_width="match_parent"

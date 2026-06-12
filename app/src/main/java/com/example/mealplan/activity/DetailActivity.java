@@ -104,13 +104,33 @@ public class DetailActivity extends AppCompatActivity {
         viewPager      = findViewById(R.id.view_pager);
         layoutDetailError = findViewById(R.id.layout_detail_error);
         btnDetailRetry    = findViewById(R.id.btn_detail_retry);
-
+        
         tvName.setText(mealName);
         tvCategory.setText(com.example.mealplan.utils.LocaleMapper.category(mealCategory));
         btnYoutube.setVisibility(View.GONE);
 
+        androidx.core.view.ViewCompat.setTransitionName(imgThumb, "meal_image");
         if (!mealThumb.isEmpty()) {
-            Glide.with(this).load(mealThumb).centerCrop().into(imgThumb);
+            supportPostponeEnterTransition();
+            imgThumb.postDelayed(this::supportStartPostponedEnterTransition, 250);
+            Glide.with(this).load(mealThumb).centerCrop()
+                    .listener(new com.bumptech.glide.request.RequestListener<android.graphics.drawable.Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@androidx.annotation.Nullable com.bumptech.glide.load.engine.GlideException e,
+                                                    Object model, com.bumptech.glide.request.target.Target<android.graphics.drawable.Drawable> target,
+                                                    boolean isFirstResource) {
+                            supportStartPostponedEnterTransition();
+                            return false;
+                        }
+                        @Override
+                        public boolean onResourceReady(android.graphics.drawable.Drawable resource, Object model,
+                                                       com.bumptech.glide.request.target.Target<android.graphics.drawable.Drawable> target,
+                                                       com.bumptech.glide.load.DataSource dataSource, boolean isFirstResource) {
+                            supportStartPostponedEnterTransition();
+                            return false;
+                        }
+                    })
+                    .into(imgThumb);
         }
 
         btnBack.setOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
@@ -188,7 +208,7 @@ public class DetailActivity extends AppCompatActivity {
             });
         });
     }
-    
+
     private void shareRecipe() {
         StringBuilder sb = new StringBuilder();
         sb.append("Resep: ").append(mealName).append("\n");
