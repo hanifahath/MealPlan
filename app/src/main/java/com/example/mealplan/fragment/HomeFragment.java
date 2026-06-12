@@ -28,6 +28,7 @@ import com.example.mealplan.network.ApiClient;
 import com.example.mealplan.network.MealApiService;
 import com.example.mealplan.network.NetworkUtils;
 import com.example.mealplan.utils.Constants;
+import com.example.mealplan.utils.LocaleMapper;
 import com.example.mealplan.utils.ThemeUtils;
 import com.example.mealplan.utils.ViewUtils;
 import java.util.ArrayList;
@@ -45,6 +46,7 @@ public class HomeFragment extends Fragment {
     private View layoutError;
     private Button btnRetry;
     private TextView tvGreeting;
+    private TextView tvSectionTitle;
     private ImageView imgErrorIcon;
     private TextView tvErrorTitle, tvErrorSubtitle;
     private androidx.swiperefreshlayout.widget.SwipeRefreshLayout swipeRefresh;
@@ -87,6 +89,7 @@ public class HomeFragment extends Fragment {
         layoutError  = view.findViewById(R.id.layout_error);
         btnRetry        = view.findViewById(R.id.btn_retry);
         tvGreeting      = view.findViewById(R.id.tv_greeting);
+        tvSectionTitle  = view.findViewById(R.id.tv_section_title);
         imgErrorIcon    = view.findViewById(R.id.img_error_icon);
         tvErrorTitle    = view.findViewById(R.id.tv_error_title);
         tvErrorSubtitle = view.findViewById(R.id.tv_error_subtitle);
@@ -116,7 +119,14 @@ public class HomeFragment extends Fragment {
 
     private void setupAdapters() {
         mealAdapter = new MealAdapter(requireContext());
-        rvMeals.setLayoutManager(new GridLayoutManager(requireContext(), 2));
+        GridLayoutManager glm = new GridLayoutManager(requireContext(), 2);
+        glm.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                return mealAdapter.isFeatured(position) ? 2 : 1;
+            }
+        });
+        rvMeals.setLayoutManager(glm);
         rvMeals.setAdapter(mealAdapter);
 
         categoryAdapter = new CategoryAdapter(requireContext(), categoryName -> {
@@ -177,7 +187,7 @@ public class HomeFragment extends Fragment {
                         showEmpty();
                     } else {
                         mealAdapter.setMeals(meals);
-                        showContent();
+                        showContent(category);
                     }
                 } else showError();
             }
@@ -282,6 +292,7 @@ public class HomeFragment extends Fragment {
 
     private void showLoading()  {
         layoutError.setVisibility(View.GONE);
+        tvSectionTitle.setVisibility(View.GONE);
         if (swipeRefresh != null && swipeRefresh.isRefreshing()) {
             return;
         }
@@ -292,14 +303,17 @@ public class HomeFragment extends Fragment {
         hideSkeleton();
         if (swipeRefresh != null) swipeRefresh.setRefreshing(false);
     }
-    private void showContent()  {
+    private void showContent(String category)  {
         hideSkeleton();
         rvMeals.setVisibility(View.VISIBLE);
         layoutError.setVisibility(View.GONE);
+        tvSectionTitle.setText(LocaleMapper.category(category));
+        tvSectionTitle.setVisibility(View.VISIBLE);
     }
     private void showError()    {
         hideSkeleton();
         rvMeals.setVisibility(View.GONE);
+        tvSectionTitle.setVisibility(View.GONE);
         imgErrorIcon.setImageResource(R.drawable.ic_no_internet);
         tvErrorTitle.setText("Tidak ada koneksi");
         tvErrorSubtitle.setText("Periksa koneksi internet kamu");
@@ -311,6 +325,7 @@ public class HomeFragment extends Fragment {
     private void showEmpty() {
         hideSkeleton();
         rvMeals.setVisibility(View.GONE);
+        tvSectionTitle.setVisibility(View.GONE);
         imgErrorIcon.setImageResource(R.drawable.ic_search);
         tvErrorTitle.setText("Belum ada resep di sini");
         tvErrorSubtitle.setText("Coba kategori lain atau cari resep favoritmu");

@@ -17,13 +17,18 @@ import com.example.mealplan.R;
 import com.example.mealplan.activity.DetailActivity;
 import com.example.mealplan.model.Meal;
 import com.example.mealplan.utils.Constants;
+import com.example.mealplan.utils.LocaleMapper;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MealAdapter extends RecyclerView.Adapter<MealAdapter.ViewHolder> {
 
+    private static final int TYPE_FEATURED = 0;
+    private static final int TYPE_GRID = 1;
+
     private final Context context;
     private List<Meal> meals = new ArrayList<>();
+    private boolean featuredEnabled = true;
     private int lastAnimPos = -1;
 
     public MealAdapter(Context context) {
@@ -36,10 +41,24 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.ViewHolder> {
         notifyDataSetChanged();
     }
 
+    public void setFeaturedEnabled(boolean enabled) {
+        this.featuredEnabled = enabled;
+    }
+
+    public boolean isFeatured(int position) {
+        return featuredEnabled && position == 0;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return isFeatured(position) ? TYPE_FEATURED : TYPE_GRID;
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_meal, parent, false);
+        int layout = viewType == TYPE_FEATURED ? R.layout.item_meal_featured : R.layout.item_meal;
+        View view = LayoutInflater.from(context).inflate(layout, parent, false);
         return new ViewHolder(view);
     }
 
@@ -50,7 +69,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.ViewHolder> {
 
         if (meal.getCategory() != null && !meal.getCategory().isEmpty()) {
             holder.tvCategory.setVisibility(View.VISIBLE);
-            holder.tvCategory.setText(com.example.mealplan.utils.LocaleMapper.category(meal.getCategory()));
+            holder.tvCategory.setText(LocaleMapper.category(meal.getCategory()));
         } else {
             holder.tvCategory.setVisibility(View.GONE);
         }

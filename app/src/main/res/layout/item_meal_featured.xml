@@ -6,13 +6,13 @@
     android:layout_height="wrap_content"
     android:layout_margin="6dp"
     android:foreground="?attr/selectableItemBackground"
-    app:cardCornerRadius="@dimen/card_radius"
+    app:cardCornerRadius="@dimen/radius_lg"
     app:cardElevation="2dp"
     app:cardBackgroundColor="@color/surface">
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="150dp">
+        android:layout_height="190dp">
 
         <ImageView
             android:id="@+id/img_meal_thumb"
@@ -24,7 +24,7 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="96dp"
+            android:layout_height="120dp"
             android:layout_gravity="bottom"
             android:background="@drawable/gradient_card_bottom"/>
 
@@ -33,31 +33,37 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:orientation="vertical"
-            android:paddingStart="11dp"
-            android:paddingEnd="11dp"
-            android:paddingBottom="10dp">
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="14dp">
 
             <TextView
                 android:id="@+id/tv_meal_category"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="9sp"
+                android:layout_marginBottom="8dp"
+                android:paddingStart="9dp"
+                android:paddingEnd="9dp"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp"
+                android:textSize="10sp"
                 android:textStyle="bold"
                 android:textAllCaps="true"
                 android:letterSpacing="0.05"
-                android:textColor="#B3FFFFFF"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/bg_chip_selected"
                 android:visibility="gone"/>
 
             <TextView
                 android:id="@+id/tv_meal_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:textSize="13sp"
+                android:textSize="20sp"
                 android:textStyle="bold"
                 android:maxLines="2"
                 android:ellipsize="end"
-                android:lineSpacingMultiplier="1.15"
+                android:lineSpacingMultiplier="1.1"
+                android:letterSpacing="-0.02"
                 android:textColor="#FFFFFF"/>
         </LinearLayout>
     </FrameLayout>
