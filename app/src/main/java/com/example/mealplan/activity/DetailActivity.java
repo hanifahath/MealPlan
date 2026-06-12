@@ -154,6 +154,13 @@ public class DetailActivity extends AppCompatActivity {
                     (android.view.ViewGroup.MarginLayoutParams) btnBack.getLayoutParams();
             lp.topMargin = baseMargin + bars.top;
             btnBack.setLayoutParams(lp);
+            android.view.View detailActions = findViewById(R.id.layout_detail_actions);
+            if (detailActions != null) {
+                android.view.ViewGroup.MarginLayoutParams alp =
+                        (android.view.ViewGroup.MarginLayoutParams) detailActions.getLayoutParams();
+                alp.topMargin = baseMargin + bars.top;
+                detailActions.setLayoutParams(alp);
+            }
             detailContent.setPadding(
                     detailContent.getPaddingLeft(), detailContent.getPaddingTop(),
                     detailContent.getPaddingRight(), bars.bottom);
