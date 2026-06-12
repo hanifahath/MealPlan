@@ -258,7 +258,7 @@ public class DetailActivity extends AppCompatActivity {
                 sb.append("\nTutorial: ").append(ytUrl).append("\n");
             }
         }
-        sb.append("\nDibagikan dari MealPlan App");
+        sb.append("\nDibagikan dari aplikasi MealPlan");
 
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");

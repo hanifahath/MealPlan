@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">MealPlan</string>
-    <string name="home">Home</string>
+    <string name="home">Beranda</string>
     <string name="favorites">Favorit</string>
-    <string name="planner">Planner</string>
+    <string name="planner">Perencana</string>
     <string name="lists">Belanja</string>
     <string name="meal_image">Gambar resep</string>
     <string name="ingredients">Bahan-Bahan</string>

@@ -74,7 +74,7 @@ public class FavoritesFragment extends Fragment {
                     public void onShareClick(FavoriteMeal meal) {
                         String text = "Resep: " + meal.getMealName()
                                 + "\nKategori: " + meal.getMealCategory()
-                                + "\n\nDibagikan dari MealPlan App";
+                                + "\n\nDibagikan dari aplikasi MealPlan";
                         Intent shareIntent = new Intent(Intent.ACTION_SEND);
                         shareIntent.setType("text/plain");
                         shareIntent.putExtra(Intent.EXTRA_TEXT, text);
