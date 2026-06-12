@@ -113,6 +113,11 @@ public class GroceryFragment extends Fragment {
                     com.example.mealplan.utils.GroceryStore.getItems(ctx);
             items.addAll(manual);
 
+            java.util.Set<String> removedKeys =
+                    com.example.mealplan.utils.GroceryStore.loadRemovedKeys(ctx);
+            items.removeIf(it ->
+                    removedKeys.contains(com.example.mealplan.utils.GroceryStore.keyOf(it)));
+
             final int finalDays = uniqueDays.size();
             final int manualCount = manual.size();
             final List<GroceryItem> finalItems = items;

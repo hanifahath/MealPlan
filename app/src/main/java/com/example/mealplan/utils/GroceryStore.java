@@ -126,6 +126,39 @@ public class GroceryStore {
         prefs(c).edit().remove(Constants.KEY_GROCERY_CHECKED).apply();
     }
 
+    public static Set<String> loadRemovedKeys(Context c) {
+        Set<String> set = new HashSet<>();
+        try {
+            String json = prefs(c).getString(Constants.KEY_GROCERY_REMOVED, "[]");
+            JSONArray arr = new JSONArray(json);
+            for (int i = 0; i < arr.length(); i++) {
+                String k = arr.optString(i, "");
+                if (!k.isEmpty()) set.add(k);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return set;
+    }
+
+    private static void saveRemovedKeys(Context c, Set<String> keys) {
+        JSONArray arr = new JSONArray();
+        for (String k : keys) arr.put(k);
+        prefs(c).edit().putString(Constants.KEY_GROCERY_REMOVED, arr.toString()).apply();
+    }
+
+    public static void addRemovedKey(Context c, GroceryItem item) {
+        String key = keyOf(item);
+        if (key.isEmpty()) return;
+        Set<String> keys = loadRemovedKeys(c);
+        keys.add(key);
+        saveRemovedKeys(c, keys);
+    }
+
+    public static void clearRemovedKeys(Context c) {
+        prefs(c).edit().remove(Constants.KEY_GROCERY_REMOVED).apply();
+    }
+
     private static boolean contains(JSONArray arr, String name, String measure, String source)
             throws Exception {
         for (int i = 0; i < arr.length(); i++) {

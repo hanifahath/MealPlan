@@ -107,7 +107,10 @@ public class GroceryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public void clearChecked() {
         for (GroceryItem it : rawItems) {
-            if (it.isChecked()) GroceryStore.setChecked(context, it, false);
+            if (it.isChecked()) {
+                GroceryStore.setChecked(context, it, false);
+                GroceryStore.addRemovedKey(context, it);
+            }
         }
         rawItems.removeIf(GroceryItem::isChecked);
         rebuildDisplayList();
@@ -219,4 +222,5 @@ public class GroceryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             tvMeasure = v.findViewById(R.id.tv_grocery_measure);
         }
     }
+
 }
