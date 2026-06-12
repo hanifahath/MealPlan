@@ -56,7 +56,6 @@ public class DetailActivity extends AppCompatActivity {
     private boolean isFavorite = false;
     private MealDetail currentDetail = null;
 
-    // Fragment tabs — dibuat di sini supaya bisa diisi data setelah API response
     private IngredientsTabFragment ingredientsTab;
     private InstructionsTabFragment instructionsTab;
 
@@ -189,8 +188,7 @@ public class DetailActivity extends AppCompatActivity {
             });
         });
     }
-
-    // Fix 7: share tanpa tanda bintang
+    
     private void shareRecipe() {
         StringBuilder sb = new StringBuilder();
         sb.append("Resep: ").append(mealName).append("\n");
@@ -271,13 +269,13 @@ public class DetailActivity extends AppCompatActivity {
             Glide.with(this).load(detail.getThumb()).centerCrop().into(imgThumb);
         }
 
-        // Isi tab fragments
-        if (ingredientsTab != null)
+        if (ingredientsTab != null) {
+            ingredientsTab.setMealName(detail.getName() != null ? detail.getName() : mealName);
             ingredientsTab.setIngredients(detail.getIngredientList());
+        }
         if (instructionsTab != null)
             instructionsTab.setInstructions(detail.getInstructions());
 
-        // YouTube button
         String ytUrl = detail.getYoutubeUrl();
         if (ytUrl != null && !ytUrl.trim().isEmpty()) {
             btnYoutube.setVisibility(View.VISIBLE);
@@ -313,6 +311,10 @@ public class DetailActivity extends AppCompatActivity {
     public static class IngredientsTabFragment extends Fragment {
         private com.example.mealplan.adapter.IngredientAdapter adapter;
         private java.util.List<String[]> pendingData = null;
+        private String mealName = "Resep";
+        private int servingFactor = 1;
+        private static final int MAX_SERVING = 12;
+        private TextView tvServingValue;
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -329,10 +331,56 @@ public class DetailActivity extends AppCompatActivity {
                     new androidx.recyclerview.widget.LinearLayoutManager(requireContext()));
             rv.setAdapter(adapter);
             rv.setNestedScrollingEnabled(false);
+
+            tvServingValue = view.findViewById(R.id.tv_serving_value);
+            updateServingLabel();
+            view.findViewById(R.id.btn_serving_minus).setOnClickListener(v -> changeServing(-1));
+            view.findViewById(R.id.btn_serving_plus).setOnClickListener(v -> changeServing(1));
+            view.findViewById(R.id.btn_add_to_grocery).setOnClickListener(v -> addSelectedToGrocery());
+
             if (pendingData != null) {
                 adapter.setIngredients(pendingData);
                 pendingData = null;
             }
+        }
+
+        private void changeServing(int delta) {
+            int next = servingFactor + delta;
+            if (next < 1) next = 1;
+            if (next > MAX_SERVING) next = MAX_SERVING;
+            if (next == servingFactor) return;
+            servingFactor = next;
+            updateServingLabel();
+            if (adapter != null) adapter.setServingFactor(servingFactor);
+        }
+
+        private void updateServingLabel() {
+            if (tvServingValue != null) tvServingValue.setText(servingFactor + "\u00d7");
+        }
+
+        private void addSelectedToGrocery() {
+            if (adapter == null) return;
+            java.util.List<String[]> selected = adapter.getSelectedItems();
+            if (selected.isEmpty()) {
+                Toast.makeText(requireContext(),
+                        "Pilih minimal satu bahan", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            String label = servingFactor > 1
+                    ? mealName + " (" + servingFactor + "\u00d7)"
+                    : mealName;
+            int added = com.example.mealplan.utils.GroceryStore.addItems(
+                    requireContext(), label, selected);
+            String msg = added > 0
+                    ? added + " bahan ditambahkan ke Daftar Belanja"
+                    : "Bahan ini sudah ada di Daftar Belanja";
+            com.google.android.material.snackbar.Snackbar.make(
+                    requireView(), msg,
+                    com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show();
+        }
+
+        public void setMealName(String name) {
+            if (name != null && !name.trim().isEmpty()) this.mealName = name.trim();
         }
 
         public void setIngredients(java.util.List<String[]> data) {

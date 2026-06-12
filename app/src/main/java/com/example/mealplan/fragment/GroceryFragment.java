@@ -81,35 +81,34 @@ public class GroceryFragment extends Fragment {
     }
 
     private void generateGroceryList() {
+        final android.content.Context ctx = requireContext();
         executor.execute(() -> {
             List<PlannerItem> plannerItems = plannerDao.getAll();
 
-            if (plannerItems.isEmpty()) {
-                requireActivity().runOnUiThread(this::showEmpty);
-                return;
-            }
-
-            // Query sekali, build HashMap
-            List<FavoriteMeal> allFavs = favoriteDao.getAll();
-            Map<String, FavoriteMeal> favMap = new HashMap<>();
-            for (FavoriteMeal f : allFavs) favMap.put(f.getMealId(), f);
-
             List<GroceryItem> items = new ArrayList<>();
-            int daysCount = 0;
-            // Track unique days
             java.util.Set<String> uniqueDays = new java.util.HashSet<>();
 
-            for (PlannerItem p : plannerItems) {
-                FavoriteMeal fav = favMap.get(p.getMealId());
-                if (fav != null && fav.getIngredients() != null) {
-                    uniqueDays.add(p.getDayOfWeek());
-                    String label = p.getDayOfWeek() + " · " + p.getMealName();
-                    items.addAll(parseIngredients(fav.getIngredients(), label));
+            if (!plannerItems.isEmpty()) {
+                List<FavoriteMeal> allFavs = favoriteDao.getAll();
+                Map<String, FavoriteMeal> favMap = new HashMap<>();
+                for (FavoriteMeal f : allFavs) favMap.put(f.getMealId(), f);
+
+                for (PlannerItem p : plannerItems) {
+                    FavoriteMeal fav = favMap.get(p.getMealId());
+                    if (fav != null && fav.getIngredients() != null) {
+                        uniqueDays.add(p.getDayOfWeek());
+                        String label = p.getDayOfWeek() + " · " + p.getMealName();
+                        items.addAll(parseIngredients(fav.getIngredients(), label));
+                    }
                 }
             }
-            daysCount = uniqueDays.size();
 
-            final int finalDays = daysCount;
+            List<GroceryItem> manual =
+                    com.example.mealplan.utils.GroceryStore.getItems(ctx);
+            items.addAll(manual);
+
+            final int finalDays = uniqueDays.size();
+            final int manualCount = manual.size();
             final List<GroceryItem> finalItems = items;
 
             requireActivity().runOnUiThread(() -> {
@@ -119,7 +118,15 @@ public class GroceryFragment extends Fragment {
                     layoutEmpty.setVisibility(View.GONE);
                     rvGrocery.setVisibility(View.VISIBLE);
                     adapter.setItems(finalItems);
-                    tvSubtitle.setText(finalDays + " hari · " + finalItems.size() + " bahan");
+                    String sub;
+                    if (finalDays > 0 && manualCount > 0)
+                        sub = finalDays + " hari + " + manualCount + " tambahan · "
+                                + finalItems.size() + " bahan";
+                    else if (finalDays > 0)
+                        sub = finalDays + " hari · " + finalItems.size() + " bahan";
+                    else
+                        sub = finalItems.size() + " bahan";
+                    tvSubtitle.setText(sub);
                 }
             });
         });
