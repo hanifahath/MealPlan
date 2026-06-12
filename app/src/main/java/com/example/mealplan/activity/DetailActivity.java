@@ -139,16 +139,21 @@ public class DetailActivity extends AppCompatActivity {
         btnDetailRetry.setOnClickListener(v -> loadDetail());
 
         final int baseMargin = (int) (14 * getResources().getDisplayMetrics().density);
-        androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(btnBack, (v, insets) -> {
-            int topInset = insets.getInsets(
-                    androidx.core.view.WindowInsetsCompat.Type.systemBars()).top;
+        final View detailRoot = findViewById(R.id.detail_root);
+        final View detailContent = findViewById(R.id.detail_content);
+        androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(detailRoot, (v, insets) -> {
+            androidx.core.graphics.Insets bars = insets.getInsets(
+                    androidx.core.view.WindowInsetsCompat.Type.systemBars());
             android.view.ViewGroup.MarginLayoutParams lp =
-                    (android.view.ViewGroup.MarginLayoutParams) v.getLayoutParams();
-            lp.topMargin = baseMargin + topInset;
-            v.setLayoutParams(lp);
+                    (android.view.ViewGroup.MarginLayoutParams) btnBack.getLayoutParams();
+            lp.topMargin = baseMargin + bars.top;
+            btnBack.setLayoutParams(lp);
+            detailContent.setPadding(
+                    detailContent.getPaddingLeft(), detailContent.getPaddingTop(),
+                    detailContent.getPaddingRight(), bars.bottom);
             return insets;
         });
-        androidx.core.view.ViewCompat.requestApplyInsets(btnBack);
+        androidx.core.view.ViewCompat.requestApplyInsets(detailRoot);
     }
 
     private void setupTabs() {
@@ -327,7 +332,6 @@ public class DetailActivity extends AppCompatActivity {
         layoutDetailError.setVisibility(View.VISIBLE);
     }
 
-
     public static class IngredientsTabFragment extends Fragment {
         private com.example.mealplan.adapter.IngredientAdapter adapter;
         private java.util.List<String[]> pendingData = null;
@@ -443,21 +447,37 @@ public class DetailActivity extends AppCompatActivity {
             java.util.regex.Pattern pureHeader = java.util.regex.Pattern.compile(
                     "^\\s*step\\b\\s*\\d*\\s*[:.\\)-]?\\s*$",
                     java.util.regex.Pattern.CASE_INSENSITIVE);
+            java.util.regex.Pattern loneNumber = java.util.regex.Pattern.compile(
+                    "^\\s*\\d{1,2}\\s*[:.\\)-]?\\s*$");
             java.util.regex.Pattern stepPrefix = java.util.regex.Pattern.compile(
                     "^\\s*step\\s+\\d+\\s*[:.\\)-]?\\s+",
                     java.util.regex.Pattern.CASE_INSENSITIVE);
             java.util.regex.Pattern numberPrefix = java.util.regex.Pattern.compile(
                     "^\\s*\\d{1,2}\\s*[:.\\)]\\s+");
 
+            String pendingHeader = null;
             for (String raw : normalized.split("\n+")) {
                 String line = raw.trim();
                 if (line.isEmpty()) continue;
                 if (pureHeader.matcher(line).matches()) continue;
+                if (loneNumber.matcher(line).matches()) continue;
                 line = stepPrefix.matcher(line).replaceFirst("");
                 line = numberPrefix.matcher(line).replaceFirst("");
                 line = line.trim();
-                if (!line.isEmpty()) steps.add(line);
+                if (line.isEmpty()) continue;
+
+                if (isHeaderLine(line)) {
+                    String h = prettyHeader(stripTrailingColon(line));
+                    pendingHeader = pendingHeader == null ? h : pendingHeader + " \u2014 " + h;
+                    continue;
+                }
+                if (pendingHeader != null) {
+                    line = pendingHeader + ": " + line;
+                    pendingHeader = null;
+                }
+                steps.add(line);
             }
+            if (pendingHeader != null) steps.add(pendingHeader);
 
             if (steps.size() <= 1 && normalized.length() > 200) {
                 steps.clear();
@@ -468,6 +488,38 @@ public class DetailActivity extends AppCompatActivity {
                 }
             }
             return steps;
+        }
+
+        private boolean isHeaderLine(String line) {
+            String t = line.trim();
+            if (t.isEmpty()) return false;
+            char last = t.charAt(t.length() - 1);
+            if (last == '.' || last == '!' || last == '?') return false;
+            if (t.endsWith(":")) return true;
+            int words = t.split("\\s+").length;
+            String letters = t.replaceAll("[^A-Za-z]", "");
+            boolean allCaps = letters.length() >= 2 && letters.equals(letters.toUpperCase());
+            if (allCaps && words <= 6) return true;
+            return words <= 3;
+        }
+
+        private String stripTrailingColon(String s) {
+            String t = s.trim();
+            while (t.endsWith(":")) t = t.substring(0, t.length() - 1).trim();
+            return t;
+        }
+
+        private String prettyHeader(String h) {
+            String letters = h.replaceAll("[^A-Za-z]", "");
+            boolean allCaps = letters.length() >= 2 && letters.equals(letters.toUpperCase());
+            if (!allCaps) return h;
+            StringBuilder sb = new StringBuilder();
+            for (String w : h.toLowerCase().split("\\s+")) {
+                if (w.isEmpty()) continue;
+                sb.append(Character.toUpperCase(w.charAt(0)))
+                        .append(w.substring(1)).append(' ');
+            }
+            return sb.toString().trim();
         }
 
         private void buildSteps(View root, String text) {
