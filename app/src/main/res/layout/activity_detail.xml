@@ -135,10 +135,9 @@
                     android:id="@+id/tv_detail_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="24sp"
-                    android:textStyle="bold"
                     android:lineSpacingMultiplier="1.1"
-                    android:textColor="#FFFFFF"/>
+                    android:textAppearance="@style/Text.Title"
+                    android:textColor="#FFFFFF" />
             </LinearLayout>
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
@@ -157,9 +156,10 @@
                 android:id="@+id/tv_lang_note"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/plus_jakarta_sans_regular"
                 android:text="@string/recipe_lang_note"
-                android:textSize="11sp"
-                android:textColor="@color/text_tertiary"/>
+                android:textColor="@color/text_tertiary"
+                android:textSize="11sp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_youtube"

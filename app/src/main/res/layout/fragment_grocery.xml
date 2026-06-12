@@ -27,19 +27,14 @@
                 android:id="@+id/tv_grocery_subtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="11sp"
-                android:textStyle="bold"
-                android:letterSpacing="0.04"
-                android:textColor="@color/text_tertiary"/>
+                android:textAppearance="@style/Text.Overline"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="1dp"
                 android:text="@string/lists"
-                android:textSize="27sp"
-                android:textStyle="bold"
-                android:textColor="@color/text_primary"/>
+                android:textAppearance="@style/Text.Display"/>
         </LinearLayout>
 
         <ImageButton

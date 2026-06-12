@@ -31,11 +31,9 @@
         android:layout_weight="1"
         android:layout_marginStart="12dp"
         android:layout_marginEnd="8dp"
-        android:textSize="13sp"
-        android:textStyle="bold"
+        android:textAppearance="@style/Text.Subtitle"
         android:maxLines="2"
-        android:ellipsize="end"
-        android:textColor="@color/text_primary"/>
+        android:ellipsize="end"/>
 
     <ImageButton
         android:id="@+id/btn_planner_meal_delete"

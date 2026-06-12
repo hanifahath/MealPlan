@@ -24,9 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="20dp"
-            android:textSize="14sp"
-            android:lineSpacingMultiplier="1.7"
-            android:textColor="?attr/colorOnBackground"
+            android:textAppearance="@style/Text.Body"
             android:visibility="gone"/>
     </LinearLayout>
 

@@ -36,15 +36,13 @@
                 android:id="@+id/tv_grocery_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="13.5sp"
-                android:textColor="@color/text_primary"/>
+                android:textAppearance="@style/Text.Subtitle"/>
 
             <TextView
                 android:id="@+id/tv_grocery_measure"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:textColor="@color/text_secondary"
+                android:textAppearance="@style/Text.Caption"
                 android:layout_marginTop="1dp"
                 android:visibility="gone"/>
         </LinearLayout>
