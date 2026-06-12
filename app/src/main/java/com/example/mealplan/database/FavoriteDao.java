@@ -17,7 +17,6 @@ public class FavoriteDao {
         dbHelper = DatabaseHelper.getInstance(context);
     }
 
-    // Tambah favorit — return true jika berhasil
     public boolean insert(FavoriteMeal meal) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -32,7 +31,6 @@ public class FavoriteDao {
         return result != -1;
     }
 
-    // Hapus favorit berdasarkan mealId
     public boolean delete(String mealId) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         int rows = db.delete(Constants.TABLE_FAVORITES,
@@ -40,7 +38,6 @@ public class FavoriteDao {
         return rows > 0;
     }
 
-    // Ambil semua favorit
     public List<FavoriteMeal> getAll() {
         List<FavoriteMeal> list = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -58,7 +55,21 @@ public class FavoriteDao {
         return list;
     }
 
-    // Cek apakah suatu resep sudah jadi favorit
+    public FavoriteMeal getByMealId(String mealId) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.query(Constants.TABLE_FAVORITES,
+                null, Constants.FAV_COL_MEAL_ID + "=?",
+                new String[]{mealId}, null, null, null);
+        FavoriteMeal meal = null;
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                meal = cursorToMeal(cursor);
+            }
+            cursor.close();
+        }
+        return meal;
+    }
+
     public boolean isFavorite(String mealId) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor cursor = db.query(Constants.TABLE_FAVORITES,

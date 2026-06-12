@@ -275,27 +275,75 @@ public class DetailActivity extends AppCompatActivity {
         apiService.getMealDetail(mealId).enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-                progressDetail.setVisibility(View.GONE);
                 if (!response.isSuccessful() || response.body() == null) {
-                    showDetailError(); return;
+                    loadFromFavoriteOrError();
+                    return;
                 }
                 try {
                     JsonArray meals = response.body().getAsJsonArray("meals");
                     if (meals != null && meals.size() > 0) {
+                        progressDetail.setVisibility(View.GONE);
                         currentDetail = gson.fromJson(
                                 meals.get(0).getAsJsonObject(), MealDetail.class);
                         bindDetail(currentDetail);
-                    } else showDetailError();
+                    } else {
+                        loadFromFavoriteOrError();
+                    }
                 } catch (Exception e) {
-                    e.printStackTrace(); showDetailError();
+                    e.printStackTrace();
+                    loadFromFavoriteOrError();
                 }
             }
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
-                progressDetail.setVisibility(View.GONE);
-                showDetailError();
+                loadFromFavoriteOrError();
             }
         });
+    }
+
+    private void loadFromFavoriteOrError() {
+        executor.execute(() -> {
+            final FavoriteMeal fav = favoriteDao.getByMealId(mealId);
+            runOnUiThread(() -> {
+                progressDetail.setVisibility(View.GONE);
+                if (fav != null) {
+                    currentDetail = mealDetailFromFavorite(fav);
+                    bindDetail(currentDetail);
+                    layoutDetailError.setVisibility(View.GONE);
+                    tabLayout.setVisibility(View.VISIBLE);
+                    viewPager.setVisibility(View.VISIBLE);
+                    Toast.makeText(this,
+                            "Mode offline \u2014 menampilkan dari favorit tersimpan",
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    showDetailError();
+                }
+            });
+        });
+    }
+
+    private MealDetail mealDetailFromFavorite(FavoriteMeal fav) {
+        JsonObject obj = new JsonObject();
+        obj.addProperty("idMeal", fav.getMealId());
+        obj.addProperty("strMeal", fav.getMealName());
+        obj.addProperty("strMealThumb", fav.getMealThumb());
+        obj.addProperty("strCategory", fav.getMealCategory());
+        obj.addProperty("strInstructions", fav.getInstructions());
+        try {
+            JsonArray arr = gson.fromJson(fav.getIngredients(), JsonArray.class);
+            if (arr != null) {
+                for (int i = 0; i < arr.size() && i < 20; i++) {
+                    JsonObject ing = arr.get(i).getAsJsonObject();
+                    String name = ing.has("name") ? ing.get("name").getAsString() : "";
+                    String measure = ing.has("measure") ? ing.get("measure").getAsString() : "";
+                    obj.addProperty("strIngredient" + (i + 1), name);
+                    obj.addProperty("strMeasure" + (i + 1), measure);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return gson.fromJson(obj, MealDetail.class);
     }
 
     private void bindDetail(MealDetail detail) {
