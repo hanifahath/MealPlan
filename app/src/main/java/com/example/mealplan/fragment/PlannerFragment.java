@@ -19,6 +19,8 @@ import com.example.mealplan.model.PlannerItem;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import android.widget.TextView;
+import com.example.mealplan.adapter.RecipePickerAdapter;
 
 public class PlannerFragment extends Fragment {
 
@@ -104,7 +106,9 @@ public class PlannerFragment extends Fragment {
     private void showFavoritePicker(String day) {
         executor.execute(() -> {
             List<FavoriteMeal> favorites = favoriteDao.getAll();
-            runOnUi(() -> {
+            requireActivity().runOnUiThread(() -> {
+                if (!isAdded()) return;
+
                 if (favorites.isEmpty()) {
                     new AlertDialog.Builder(requireContext())
                             .setTitle("Belum ada favorit")
@@ -114,29 +118,36 @@ public class PlannerFragment extends Fragment {
                     return;
                 }
 
-                String[] names = favorites.stream()
-                        .map(FavoriteMeal::getMealName)
-                        .toArray(String[]::new);
+                View dialogView = LayoutInflater.from(requireContext())
+                        .inflate(R.layout.dialog_recipe_picker, null);
+                TextView tvTitle = dialogView.findViewById(R.id.tv_picker_title);
+                RecyclerView rv = dialogView.findViewById(R.id.rv_recipe_picker);
+                tvTitle.setText("Pilih resep untuk " + day);
+                rv.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-                new AlertDialog.Builder(requireContext())
-                        .setTitle("Pilih resep untuk " + day)
-                        .setItems(names, (dialog, which) -> {
-                            FavoriteMeal chosen = favorites.get(which);
-                            PlannerItem item = new PlannerItem(
-                                    day,
-                                    chosen.getMealId(),
-                                    chosen.getMealName(),
-                                    chosen.getMealThumb()
-                            );
-                            executor.execute(() -> {
-                                plannerDao.insert(item);
-                                List<PlannerItem> updated = plannerDao.getAll();
-                                runOnUi(() ->
-                                        plannerAdapter.setPlannerItems(updated));
-                            });
-                        })
-                        .setNegativeButton("Batal", null)
-                        .show();
+                androidx.appcompat.app.AlertDialog dialog =
+                        new androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                                .setView(dialogView)
+                                .setNegativeButton("Batal", null)
+                                .create();
+
+                RecipePickerAdapter pickerAdapter = new RecipePickerAdapter(
+                        requireContext(), favorites, chosen -> {
+                    dialog.dismiss();
+                    PlannerItem item = new PlannerItem(
+                            day,
+                            chosen.getMealId(),
+                            chosen.getMealName(),
+                            chosen.getMealThumb());
+                    executor.execute(() -> {
+                        plannerDao.insert(item);
+                        List<PlannerItem> updated = plannerDao.getAll();
+                        requireActivity().runOnUiThread(() ->
+                                plannerAdapter.setPlannerItems(updated));
+                    });
+                });
+                rv.setAdapter(pickerAdapter);
+                dialog.show();
             });
         });
     }
