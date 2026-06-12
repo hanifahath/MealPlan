@@ -29,7 +29,7 @@ import com.example.mealplan.network.ApiClient;
 import com.example.mealplan.network.MealApiService;
 import com.example.mealplan.utils.Constants;
 import com.example.mealplan.utils.ThemeUtils;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -49,7 +49,7 @@ public class DetailActivity extends AppCompatActivity {
 
     private FavoriteDao favoriteDao;
     private MealApiService apiService;
-    private final Executor executor = Executors.newSingleThreadExecutor();
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final Gson gson = new Gson();
 
     private String mealId, mealName, mealThumb, mealCategory;
@@ -88,6 +88,12 @@ public class DetailActivity extends AppCompatActivity {
         setupTabs();
         checkFavoriteStatus();
         loadDetail();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        executor.shutdown();
     }
 
     private void initViews() {

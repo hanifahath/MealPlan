@@ -17,7 +17,7 @@ import com.example.mealplan.model.FavoriteMeal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class FavoritesFragment extends Fragment {
@@ -27,7 +27,7 @@ public class FavoritesFragment extends Fragment {
     private TextView tvFavCount;
     private FavoriteAdapter adapter;
     private FavoriteDao favoriteDao;
-    private final Executor executor = Executors.newSingleThreadExecutor();
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private int currentSort = 0;
 
     @Override
@@ -101,6 +101,12 @@ public class FavoritesFragment extends Fragment {
                 checkEmpty();
             });
         });
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        executor.shutdown();
     }
 
     private void showSortDialog() {

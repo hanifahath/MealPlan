@@ -13,10 +13,12 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.mealplan.R;
 import com.example.mealplan.model.GroceryItem;
+import com.example.mealplan.utils.GroceryStore;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class GroceryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -44,6 +46,11 @@ public class GroceryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public void setItems(List<GroceryItem> items) {
         this.rawItems = new ArrayList<>(items);
+        // Pulihkan status "sudah dibeli" dari penyimpanan lokal
+        Set<String> checkedKeys = GroceryStore.loadCheckedKeys(context);
+        for (GroceryItem it : rawItems) {
+            it.setChecked(checkedKeys.contains(GroceryStore.keyOf(it)));
+        }
         rebuildDisplayList();
     }
 
@@ -99,6 +106,9 @@ public class GroceryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     public void clearChecked() {
+        for (GroceryItem it : rawItems) {
+            if (it.isChecked()) GroceryStore.setChecked(context, it, false);
+        }
         rawItems.removeIf(GroceryItem::isChecked);
         rebuildDisplayList();
     }
@@ -164,6 +174,7 @@ public class GroceryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             h.cbGrocery.setOnCheckedChangeListener((btn, isChecked) -> {
                 item.setChecked(isChecked);
+                GroceryStore.setChecked(context, item, isChecked);
                 applyCheckedStyle(h, isChecked);
                 notifyProgress();
                 scheduleRebuild();

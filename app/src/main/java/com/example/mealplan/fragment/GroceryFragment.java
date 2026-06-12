@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class GroceryFragment extends Fragment {
@@ -40,7 +40,7 @@ public class GroceryFragment extends Fragment {
 
     private PlannerDao plannerDao;
     private FavoriteDao favoriteDao;
-    private final Executor executor = Executors.newSingleThreadExecutor();
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final Gson gson = new Gson();
 
     @Override
@@ -78,6 +78,12 @@ public class GroceryFragment extends Fragment {
     public void onResume() {
         super.onResume();
         generateGroceryList();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        executor.shutdown();
     }
 
     private void generateGroceryList() {

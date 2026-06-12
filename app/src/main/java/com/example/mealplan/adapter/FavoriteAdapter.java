@@ -99,7 +99,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
             popup.getMenu().add(0, 2, 1, "Hapus dari favorit");
             popup.setOnMenuItemClickListener(item -> {
                 int pos = holder.getAdapterPosition();
-                if (pos == RecyclerView.NO_ID) return false;
+                if (pos == RecyclerView.NO_POSITION) return false;
                 if (item.getItemId() == 1) {
                     listener.onShareClick(meal);
                 } else if (item.getItemId() == 2) {

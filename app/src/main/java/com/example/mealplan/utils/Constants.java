@@ -26,6 +26,7 @@ public class Constants {
     public static final String PREF_NAME = "mealplan_prefs";
     public static final String PREF_THEME = "theme_mode";
     public static final String KEY_EXTRA_GROCERY = "extra_grocery_items";
+    public static final String KEY_GROCERY_CHECKED = "grocery_checked_keys";
 
     public static final String INTENT_MEAL_ID = "meal_id";
     public static final String INTENT_MEAL_NAME = "meal_name";

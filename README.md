@@ -40,7 +40,7 @@ Berikut bagaimana setiap syarat teknis diterapkan di aplikasi:
 
 ### 1. Activity (minimal 2, salah satu Launcher)
 
-Aplikasi memiliki **5 Activity**: `SplashActivity` (Launcher), `MainActivity`, `DetailActivity`, `SearchActivity`, `GroceryActivity`. `SplashActivity` ditandai sebagai launcher pada `AndroidManifest.xml`, lalu mengarahkan ke `MainActivity`.
+Aplikasi memiliki **4 Activity**: `SplashActivity` (Launcher), `MainActivity`, `DetailActivity`, dan `SearchActivity`. Daftar belanja diimplementasikan sebagai `GroceryFragment`, bukan Activity terpisah. `SplashActivity` ditandai sebagai launcher pada `AndroidManifest.xml`, lalu mengarahkan ke `MainActivity`.
 
 ### 2. Intent
 
@@ -108,4 +108,4 @@ Data resep berasal dari **[TheMealDB](https://www.themealdb.com/)** — API publ
 
 ## 👤 Penulis
 
-Tugas Final Lab Pemrograman Mobile — dikerjakan secara individu.
+Tugas Final Lab Pemrograman Mobile dikerjakan secara individu oleh Hanifah Atthahira Basir

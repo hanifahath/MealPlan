@@ -9,7 +9,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class GroceryStore {
 
@@ -71,6 +73,57 @@ public class GroceryStore {
 
     public static void clear(Context c) {
         prefs(c).edit().remove(Constants.KEY_EXTRA_GROCERY).apply();
+    }
+
+    // ===== Status centang (checked) bahan belanja =====
+    // Disimpan terpisah sebagai kumpulan "key" unik agar status "sudah dibeli"
+    // tetap bertahan walau daftar di-generate ulang setiap onResume().
+    private static String keyOf(String name, String measure, String source) {
+        return (name == null ? "" : name.trim()) + "|"
+                + (measure == null ? "" : measure.trim()) + "|"
+                + (source == null ? "" : source.trim());
+    }
+
+    public static String keyOf(GroceryItem item) {
+        if (item == null) return "";
+        return keyOf(item.getName(), item.getMeasure(), item.getSourceMeal());
+    }
+
+    public static Set<String> loadCheckedKeys(Context c) {
+        Set<String> set = new HashSet<>();
+        try {
+            String json = prefs(c).getString(Constants.KEY_GROCERY_CHECKED, "[]");
+            JSONArray arr = new JSONArray(json);
+            for (int i = 0; i < arr.length(); i++) {
+                String k = arr.optString(i, "");
+                if (!k.isEmpty()) set.add(k);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return set;
+    }
+
+    private static void saveCheckedKeys(Context c, Set<String> keys) {
+        JSONArray arr = new JSONArray();
+        for (String k : keys) arr.put(k);
+        prefs(c).edit().putString(Constants.KEY_GROCERY_CHECKED, arr.toString()).apply();
+    }
+
+    public static boolean isChecked(Context c, GroceryItem item) {
+        return loadCheckedKeys(c).contains(keyOf(item));
+    }
+
+    public static void setChecked(Context c, GroceryItem item, boolean checked) {
+        String key = keyOf(item);
+        if (key.isEmpty()) return;
+        Set<String> keys = loadCheckedKeys(c);
+        if (checked) keys.add(key); else keys.remove(key);
+        saveCheckedKeys(c, keys);
+    }
+
+    public static void clearCheckedKeys(Context c) {
+        prefs(c).edit().remove(Constants.KEY_GROCERY_CHECKED).apply();
     }
 
     private static boolean contains(JSONArray arr, String name, String measure, String source)

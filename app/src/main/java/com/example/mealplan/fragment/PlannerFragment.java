@@ -16,7 +16,7 @@ import com.example.mealplan.database.PlannerDao;
 import com.example.mealplan.model.FavoriteMeal;
 import com.example.mealplan.model.PlannerItem;
 import java.util.List;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class PlannerFragment extends Fragment {
@@ -25,7 +25,7 @@ public class PlannerFragment extends Fragment {
     private PlannerAdapter plannerAdapter;
     private PlannerDao plannerDao;
     private FavoriteDao favoriteDao;
-    private final Executor executor = Executors.newSingleThreadExecutor();
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -86,6 +86,12 @@ public class PlannerFragment extends Fragment {
     public void onResume() {
         super.onResume();
         loadPlanner();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        executor.shutdown();
     }
 
     private void loadPlanner() {
