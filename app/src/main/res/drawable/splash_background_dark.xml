@@ -5,4 +5,9 @@
             <solid android:color="#1A1210"/>
         </shape>
     </item>
+    <item
+        android:width="140dp"
+        android:height="140dp"
+        android:drawable="@drawable/ic_splash_logo_dark"
+        android:gravity="center"/>
 </layer-list>
