@@ -60,6 +60,8 @@ public class HomeFragment extends Fragment {
     private final List<String> realCategories = new ArrayList<>();
     private final Random random = new Random();
 
+    private static final int RANDOM_FEED_COUNT = 12;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_home, container, false);
@@ -165,13 +167,7 @@ public class HomeFragment extends Fragment {
                     cats.add(0, new Category(null, null, null));
                     categoryAdapter.setCategories(cats);
                     currentCategory = null;
-                    if (cats.size() > 1) {
-                        currentCategory = cats.get(1).getName();
-                        categoryAdapter.setSelectedPosition(1);
-                        loadMealsByCategory(currentCategory);
-                    } else {
-                        loadDefaultMeals();
-                    }
+                    loadDefaultMeals();
                 } else {
                     showError();
                 }
@@ -211,13 +207,52 @@ public class HomeFragment extends Fragment {
     }
 
     private void loadDefaultMeals() {
-        String category;
-        if (!realCategories.isEmpty()) {
-            category = realCategories.get(random.nextInt(realCategories.size()));
-        } else {
-            category = "Chicken";
+        if (!NetworkUtils.isConnected(requireContext())) { showError(); return; }
+        showLoading();
+        final List<Meal> collected = new ArrayList<>();
+        final java.util.Set<String> seenIds = new java.util.HashSet<>();
+        final int[] remaining = { RANDOM_FEED_COUNT };
+        for (int i = 0; i < RANDOM_FEED_COUNT; i++) {
+            apiService.getRandomMeal().enqueue(new Callback<JsonObject>() {
+                @Override
+                public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                    if (isAdded() && response.isSuccessful() && response.body() != null) {
+                        List<Meal> meals = parseMeals(response.body(), "");
+                        for (Meal m : meals) {
+                            if (m.getId() != null && !m.getId().isEmpty() && seenIds.add(m.getId())) {
+                                collected.add(m);
+                            }
+                        }
+                    }
+                    onRandomFeedDone(collected, remaining);
+                }
+                @Override
+                public void onFailure(Call<JsonObject> call, Throwable t) {
+                    onRandomFeedDone(collected, remaining);
+                }
+            });
         }
-        loadMealsByCategory(category);
+    }
+
+    private void onRandomFeedDone(List<Meal> collected, int[] remaining) {
+        remaining[0]--;
+        if (remaining[0] > 0) return;
+        if (!isAdded()) return;
+        hideLoading();
+        if (collected.isEmpty()) {
+            showError();
+        } else {
+            mealAdapter.setMeals(collected);
+            showContentForAll();
+        }
+    }
+
+    private void showContentForAll() {
+        hideSkeleton();
+        rvMeals.setVisibility(View.VISIBLE);
+        layoutError.setVisibility(View.GONE);
+        tvSectionTitle.setText("Untukmu");
+        tvSectionTitle.setVisibility(View.VISIBLE);
     }
 
     private void refreshHome() {
